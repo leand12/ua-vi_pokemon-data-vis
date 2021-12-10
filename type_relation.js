@@ -1,19 +1,13 @@
 
-var svg = d3.select("#type_relation"),
+var svg = d3.select("svg.type-relation"),
     width = +svg.node().getBoundingClientRect().width,
     height = +svg.node().getBoundingClientRect().height;
 
 // svg objects
-var link, node, nodeText;
+var link, node, nodeHalf, nodeText;
 // the data - an object with nodes and links
 var graph;
 
-// load the data
-// d3.json("miserables.json").then(function (data) {
-//     graph = data;
-//     initializeDisplay();
-//     initializeSimulation();
-// });
 
 d3.json("data.json").then(function (data) {
     transformData(data);
@@ -46,9 +40,8 @@ function transformData(data) {
     let types = {}, links = {};
 
     for (var d of data.pokemons) {
-        console.log(d.generation)
-        if (d.generation != 1)
-            continue;
+        // if (d.generation != 1)
+        //     continue;
 
         let dtype;
 
@@ -126,7 +119,7 @@ forceProperties = {
     },
     link: {
         enabled: true,
-        distance: 30,
+        distance: 100,
         iterations: 1
     }
 }
@@ -157,7 +150,7 @@ function updateForces() {
         .distanceMax(forceProperties.charge.distanceMax);
     simulation.force("collide")
         .strength(forceProperties.collide.strength * forceProperties.collide.enabled)
-        .radius(function (d) { return nodeRadius(d.value) + 10; })
+        .radius((d) => nodeRadius(d.value) + 10)
         .iterations(forceProperties.collide.iterations);
     simulation.force("forceX")
         .strength(forceProperties.forceX.strength * forceProperties.forceX.enabled)
@@ -166,7 +159,7 @@ function updateForces() {
         .strength(forceProperties.forceY.strength * forceProperties.forceY.enabled)
         .y(height * forceProperties.forceY.y);
     simulation.force("link")
-        .id(function (d) { return d.id; })
+        .id((d) => d.id)
         .distance(forceProperties.link.distance)
         .iterations(forceProperties.link.iterations)
         .links(forceProperties.link.enabled ? graph.links : []);
@@ -178,9 +171,8 @@ function updateForces() {
 
 
 function nodeRadius(value) {
-    return (Math.log(value+1) + 1) * 8
+    return (Math.log(value + 1) + 1) * 8;
 }
-
 
 
 //////////// DISPLAY ////////////
@@ -192,7 +184,9 @@ function initializeDisplay() {
         .attr("class", "links")
         .selectAll("line")
         .data(graph.links)
-        .enter().append("line");
+        .enter().append("line")
+        .attr("stroke", (d) => colours[d.target])
+    // .attr("stroke-width", 5);
 
     // set the data and properties of node circles
     node = svg.append("g")
@@ -200,25 +194,35 @@ function initializeDisplay() {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", function (d) { return nodeRadius(d.value); })
-        .attr("stroke", function (d) { return colours[d.id]; })
-        .attr("fill", function (d) { return colours[d.id]; })
+        .attr("r", (d) => nodeRadius(d.value))
+        // .attr("stroke", (d) => colours[d.id])
+        .attr("fill", (d) => colours[d.id.split(" ")[0]])
+        .on("click", filterType)
         .call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended));
+
+    nodeHalf = svg.append("g")
+        .attr("class", "nodes-half")
+        .selectAll("path")
+        .data(graph.nodes.filter((d) => d.id.indexOf(" ") != -1))
+        .enter().append("g").append("path")
+        .attr("d", (d) => { const r = nodeRadius(d.value); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` })
+        .attr("fill", (d) => colours[d.id.split(" ")[1]])
+        .attr("mask", "url(#fade)");
 
     nodeText = svg.append("g")
         .attr("class", "nodes-text noselect")
         .selectAll("text")
         .data(graph.nodes)
         .enter().append("text")
-        .text(function (d) { return d.id + "\n" + d.value; })
+        .text((d) => d.id + "\n" + d.value)
 
 
     // node tooltip
     node.append("title")
-        .text(function (d) { return d.id; });
+        .text((d) => d.id);
     // visualize the graph
     updateDisplay();
 }
@@ -231,26 +235,32 @@ function updateDisplay() {
     //     .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
 
     link
-        .attr("stroke-width", forceProperties.link.enabled ? 1 : .5)
+        .attr("stroke-width", forceProperties.link.enabled ? 5 : .5)
         .attr("opacity", forceProperties.link.enabled ? 1 : 0);
 }
 
 // update the display positions after each simulation tick
 function ticked() {
     link
-        .attr("x1", function (d) { return d.source.x; })
-        .attr("y1", function (d) { return d.source.y; })
-        .attr("x2", function (d) { return d.target.x; })
-        .attr("y2", function (d) { return d.target.y; });
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y);
 
     node
-        .attr("cx", function (d) { return d.x; })
-        .attr("cy", function (d) { return d.y; });
+        .attr("cx", (d) => d.x)
+        .attr("cy", (d) => d.y);
+
+    nodeHalf
+        .attr("transform", (d) => {
+            const r = nodeRadius(d.value);
+            return `translate(${d.x - r}, ${d.y - r}) rotate(90, ${r}, ${r})`
+        });
 
     nodeText
-        .attr("x", function (d) { return d.x - nodeRadius(d.value); })
-        .attr("y", function (d) { return d.y; })
-        .style("font-size", (d) => { return nodeRadius(d.value) * .5; });
+        .attr("x", (d) => d.x - nodeRadius(d.value))
+        .attr("y", (d) => d.y)
+        .style("font-size", (d) => nodeRadius(d.value) * .5);
     d3.select('#alpha_value').style('flex-basis', (simulation.alpha() * 100) + '%');
 }
 
@@ -273,7 +283,13 @@ function dragended(event, d) {
     if (!event.active) simulation.alphaTarget(0.0001);
     d.fx = null;
     d.fy = null;
+    event.sourceEvent.stopPropagation();
 }
+
+function filterType(event, d) {
+    console.log("button clicked", event, d);
+}
+
 
 // update size-related forces
 d3.select(window).on("resize", function () {

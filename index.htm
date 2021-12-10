@@ -220,8 +220,8 @@
                 length</p>
             <label title="The force will push/pull nodes to make links this long">
                 distance
-                <output id="link_DistanceSliderOutput">30</output>
-                <input type="range" min="0" max="100" value="30" step="1"
+                <output id="link_DistanceSliderOutput">100</output>
+                <input type="range" min="0" max="100" value="100" step="1"
                     oninput="d3.select('#link_DistanceSliderOutput').text(value); forceProperties.link.distance=value; updateAll();">
             </label>
             <label
