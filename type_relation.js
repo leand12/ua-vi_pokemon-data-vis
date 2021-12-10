@@ -7,12 +7,22 @@ var svg = d3.select("svg.type-relation"),
 var link, node, nodeHalf, nodeText;
 // the data - an object with nodes and links
 var graph;
+var mainNodeRef = {}
 
 
 d3.json("data.json").then(function (data) {
     transformData(data);
     initializeDisplay();
     initializeSimulation();
+
+    var mysvg = $("svg.type-relation");
+    var l1 = $("#l1");
+    var l2 = $("#l2");
+    var s = $("#s");
+    console.log(mysvg, l1)
+    mysvg.append(l1);
+    mysvg.append(l2);
+    mysvg.append(s);
 });
 
 let colours = {
@@ -48,10 +58,12 @@ function transformData(data) {
         if (d.type2 && d.type1 != d.type2) {
             dtype = [d.type1, d.type2].sort().join(" ");
             links[dtype] = [d.type1, d.type2];
-            for (const t of [d.type1, d.type2])
+
+            for (const t of [d.type1, d.type2]) {
                 if (!(t in types)) {
                     types[t] = 0;
                 }
+            }
 
         } else {
             dtype = d.type1;
@@ -70,7 +82,7 @@ function transformData(data) {
     }
     for (var [s, targets] of Object.entries(links)) {
         for (var t of targets) {
-            graph.links.push({ source: s, target: t });
+            graph.links.push({ source: s, target: t, value: types[s] });
         }
     }
 }
@@ -87,6 +99,12 @@ function initializeSimulation() {
     simulation.nodes(graph.nodes);
     initializeForces();
     simulation.on("tick", ticked);
+
+    for (const n of graph.nodes) {
+        if (n.id.indexOf(" ") == -1) {
+            mainNodeRef[n.id] = n;
+        }
+    }
 }
 
 // values for all forces
@@ -179,6 +197,10 @@ function nodeRadius(value) {
     return (Math.log(value + 1) + 1) * 8;
 }
 
+function linkWidth(value) {
+    return (Math.log(value + 1) + 1);
+}
+
 
 //////////// DISPLAY ////////////
 
@@ -223,7 +245,7 @@ function initializeDisplay() {
         .data(graph.nodes)
         .enter().append("text")
         .text((d) => d.id + "\n" + d.value)
-
+        .style("font-size", (d) => nodeRadius(d.value) * .5)
 
     // node tooltip
     node.append("title")
@@ -240,9 +262,16 @@ function updateDisplay() {
     //     .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
 
     link
-        .attr("stroke-width", forceProperties.link.enabled ? 5 : .5)
-        .attr("opacity", forceProperties.link.enabled ? 1 : 0);
+        .attr("stroke-width", forceProperties.link.enabled ? (d) => linkWidth(d.value) : .5)
+        .attr("opacity", forceProperties.link.enabled ? 0.75 : 0);
 }
+
+var buff = 0, ML = [];
+document.addEventListener('keypress', (event) => {
+    // Alert the key name and key code on keydown
+    // alert(`Key pressed ${name} \r\n Key code value: ${code}`);
+    console.error(event.code, ML)
+}, false);
 
 // update the display positions after each simulation tick
 function ticked() {
@@ -258,14 +287,74 @@ function ticked() {
 
     nodeHalf
         .attr("transform", (d) => {
-            const r = nodeRadius(d.value);
-            return `translate(${d.x - r}, ${d.y - r}) rotate(90, ${r}, ${r})`
+            const r = nodeRadius(d.value),
+                [type1, type2] = d.id.split(" "),
+                x1 = mainNodeRef[type1].x,
+                y1 = mainNodeRef[type1].y,
+                x2 = mainNodeRef[type2].x,
+                y2 = mainNodeRef[type2].y,
+                // a = Math.atan((d.y - y1 + d.y - y2) / (d.x - x1 + d.x - x2)) * 180 / Math.PI;
+
+                // uv = (x1 - d.x) * (x2 - d.x) + (y1 - d.y) * (y2 - d.y),
+                // u = Math.sqrt(Math.pow(x1 - d.x, 2) * Math.pow(y1 - d.y, 2)),
+                // v = Math.sqrt(Math.pow(x2 - d.x, 2) * Math.pow(y2 - d.y, 2)),
+                // a = Math.acos( uv / (u*v) ) * 180 / Math.PI;
+
+                a1 = Math.atan2((d.y - y1), (d.x - x1)),
+                a2 = Math.atan2((d.y - y2), (d.x - x2)),
+                a3 = (a1 + a2) / 2,
+                slope = Math.tan(a3);
+
+
+            let a = a3 * 180 / Math.PI;
+
+
+            if (a1 < 0) {
+                a += 180;
+            }
+
+            if (a1 > 0 && a1 < a2) {
+                a += 180;
+            }
+
+            if (a1 < 0 && a2 < 0 && a1 > a2) {
+                a += 180;
+            }
+
+            // var t = uv / (u * v); +
+            // if (t > 1 || t < -1) console.error(t, d.x, d.y, x1, y1, x2, y2)
+
+            if (d.id === "flying normal") {
+                if (++buff === 10) {
+                    buff = 0;
+                    console.log(a1 * 180 / Math.PI, a2 * 180 / Math.PI, a3 * 180 / Math.PI)
+                    ML = [a1 * 180 / Math.PI, a2 * 180 / Math.PI, a3 * 180 / Math.PI];
+                }
+                d3.select("#l1")
+                    .attr("x1", d.x)
+                    .attr("x2", x1)
+                    .attr("y1", d.y)
+                    .attr("y2", y1)
+                d3.select("#l2")
+                    .attr("x1", d.x)
+                    .attr("x2", x2)
+                    .attr("y1", d.y)
+                    .attr("y2", y2)
+                d3.select("#s")
+                    .attr("x1", d.x)
+                    .attr("x2", d.x + 200)
+                    .attr("y1", d.y)
+                    .attr("y2", d.y + 200 * slope)
+                // console.log(a, d.y - y1 + d.y - y2, d.x - x1 + d.x - x2)
+            }
+
+            return `translate(${d.x - r}, ${d.y - r}) rotate(${a}, ${r}, ${r})`
         });
 
     nodeText
         .attr("x", (d) => d.x - nodeRadius(d.value))
-        .attr("y", (d) => d.y)
-        .style("font-size", (d) => nodeRadius(d.value) * .5);
+        .attr("y", (d) => d.y);
+
     d3.select('#alpha_value').style('flex-basis', (simulation.alpha() * 100) + '%');
 }
 
