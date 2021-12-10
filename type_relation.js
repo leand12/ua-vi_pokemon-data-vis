@@ -124,6 +124,11 @@ forceProperties = {
     }
 }
 
+$('#select-type').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+    console.log($('#select-type').val())
+});
+
+
 // add forces to the simulation
 function initializeForces() {
     // add forces and associate each with a name
