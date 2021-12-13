@@ -41,8 +41,8 @@ function transformData(data) {
     let types = {}, links = {};
 
     for (var d of data.pokemons) {
-        // if (d.generation != 1)
-        //     continue;
+        if (d.generation != 1)
+             continue;
 
         let dtype;
 
@@ -327,7 +327,31 @@ function dragended(event, d) {
 }
 
 function filterType(event, d) {
-    console.log("button clicked", event, d);
+    console.log("clicked on type", d.id);
+    console.log(d)
+
+    let f;
+    
+    if (d.id.split(" ").length != 1) {
+        // turns on parents and self
+        const [type1, type2] = d.id.split(" ");
+        f = (id) => ([type1, type2, d.id].includes(id));
+    } else {
+        // turns on self and those who contain self
+        f = (id) => (id.includes(d.id));
+    }
+ 
+    node.attr("fill-opacity", (o)=> {
+        return f(o.id) ? 1 : 0.2;
+    })
+
+    nodeHalf.attr("fill-opacity", (o)=> {
+        return f(o.id) ? 1 : 0.2;
+    })
+
+    link.attr("opacity", (o)=> {
+        return f(o.target.id) && f(o.source.id) ? 1 : 0.1;
+    })
 }
 
 
