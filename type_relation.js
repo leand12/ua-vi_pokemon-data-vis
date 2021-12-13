@@ -229,7 +229,8 @@ function initializeDisplay() {
         .enter().append("g").append("path")
         .attr("d", (d) => { const r = nodeRadius(d.value); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` })
         .attr("fill", (d) => colours[d.id.split(" ")[1]])
-        .attr("mask", "url(#fade)");
+        .attr("mask", "url(#fade)")
+        .on("click", filterType);
 
     nodeText = svg.append("g")
         .attr("class", "nodes-text noselect")
