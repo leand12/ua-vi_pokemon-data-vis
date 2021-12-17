@@ -1,0 +1,9 @@
+.App {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  font-family: sans-serif;
+  font-size: 75%;
+}

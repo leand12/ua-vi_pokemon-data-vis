@@ -1,20 +1,12 @@
+import * as d3 from "d3";
 
-var svg = d3.select("svg.type-relation"),
-    width = +svg.node().getBoundingClientRect().width,
-    height = +svg.node().getBoundingClientRect().height;
-
+let svg, width, height, simulation;
 // svg objects
-var link, node, nodeHalf, nodeText;
-// the data - an object with nodes and links
-var graph;
-var mainNodeRef = {}
-
-
-d3.json("data.json").then(function (data) {
-    transformData(data);
-    initializeDisplay();
-    initializeSimulation();
-});
+let link, node, nodeHalf, nodeText;
+// the data: an object with nodes and links
+let graph;
+// an auxiliar object for halfNode orientation
+let mainNodePtr = {};
 
 let colours = {
     normal: '#A8A77A',
@@ -37,69 +29,8 @@ let colours = {
     fairy: '#D685AD',
 };
 
-function transformData(data) {
-    let types = {}, links = {};
-
-    for (var d of data.pokemons) {
-        if (d.generation != 1)
-             continue;
-
-        let dtype;
-
-        if (d.type2 && d.type1 != d.type2) {
-            dtype = [d.type1, d.type2].sort().join(" ");
-            links[dtype] = [d.type1, d.type2];
-
-            for (const t of [d.type1, d.type2]) {
-                if (!(t in types)) {
-                    types[t] = 0;
-                }
-            }
-
-        } else {
-            dtype = d.type1;
-        }
-
-        if (dtype in types) {
-            types[dtype] += 1;
-        } else {
-            types[dtype] = 1;
-        }
-    }
-
-    graph = { nodes: [], links: [] }
-    for (var [t, v] of Object.entries(types)) {
-        graph.nodes.push({ id: t, value: v });
-    }
-    for (var [s, targets] of Object.entries(links)) {
-        for (var t of targets) {
-            graph.links.push({ source: s, target: t, value: types[s] });
-        }
-    }
-}
-
-
-
-//////////// FORCE SIMULATION //////////// 
-
-// force simulator
-var simulation = d3.forceSimulation(graph);
-
-// set up the simulation and event to update locations after each tick
-function initializeSimulation() {
-    simulation.nodes(graph.nodes);
-    initializeForces();
-    simulation.on("tick", ticked);
-
-    for (const n of graph.nodes) {
-        if (n.id.indexOf(" ") == -1) {
-            mainNodeRef[n.id] = n;
-        }
-    }
-}
-
 // values for all forces
-forceProperties = {
+export const forceProperties = {
     center: {
         x: 0.5,
         y: 0.5
@@ -133,14 +64,70 @@ forceProperties = {
     }
 }
 
-$('#select-type').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-    console.log(e, clickedIndex, isSelected, previousValue);
-    console.log($('#select-type').val());
-});
+export function transformData(data) {
+    let types = {}, links = {};
+
+    for (var d of data.pokemons) {
+        if (d.generation != 1)
+            continue;
+
+        let dtype;
+
+        if (d.type2 && d.type1 != d.type2) {
+            dtype = [d.type1, d.type2].sort().join(" ");
+            links[dtype] = [d.type1, d.type2];
+
+            for (const t of [d.type1, d.type2]) {
+                if (!(t in types)) {
+                    types[t] = 0;
+                }
+            }
+        } else {
+            dtype = d.type1;
+        }
+
+        if (dtype in types) {
+            types[dtype] += 1;
+        } else {
+            types[dtype] = 1;
+        }
+    }
+
+    graph = { nodes: [], links: [] }
+    for (var [t, v] of Object.entries(types)) {
+        graph.nodes.push({ id: t, value: v });
+    }
+    for (var [s, targets] of Object.entries(links)) {
+        for (var t of targets) {
+            graph.links.push({ source: s, target: t, value: types[s] });
+        }
+    }
+}
 
 
-// add forces to the simulation
-function initializeForces() {
+//////////// FORCE SIMULATION //////////// 
+
+function nodeRadius(value) {
+    return (Math.log(value + 1) + 1) * 8;
+}
+
+function linkWidth(value) {
+    return (Math.log(value + 1) + 1);
+}
+
+// set up the simulation and event to update locations after each tick
+export function initializeSimulation() {
+    // create map with node references
+    for (const n of graph.nodes) {
+        if (n.id.indexOf(" ") == -1) {
+            mainNodePtr[n.id] = n;
+        }
+    }
+    // force simulator
+    simulation = d3.forceSimulation(graph);
+
+    simulation.nodes(graph.nodes);
+
     // add forces and associate each with a name
     simulation
         .force("link", d3.forceLink())
@@ -149,12 +136,23 @@ function initializeForces() {
         .force("center", d3.forceCenter())
         .force("forceX", d3.forceX())
         .force("forceY", d3.forceY());
+
     // apply properties to each of the forces
     updateForces();
+
+    simulation.on("tick", ticked);
+
+    // update size-related forces
+    d3.select(window).on("resize", () => {
+        width = svg.node().getBoundingClientRect().width;
+        height = +svg.node().getBoundingClientRect().height;
+        updateForces();
+    });
 }
 
+
 // apply new force properties
-function updateForces() {
+export function updateForces() {
     // get each force by name and update the properties
     simulation.force("center")
         .x(width * forceProperties.center.x)
@@ -185,19 +183,17 @@ function updateForces() {
 }
 
 
-function nodeRadius(value) {
-    return (Math.log(value + 1) + 1) * 8;
-}
-
-function linkWidth(value) {
-    return (Math.log(value + 1) + 1);
-}
-
 
 //////////// DISPLAY ////////////
 
 // generate the svg objects and force simulation
-function initializeDisplay() {
+export function initializeDisplay() {
+    svg = d3.select("svg.type-relation");
+    svg.selectAll("*:not(defs, defs *)").remove();
+
+    width = svg.node().getBoundingClientRect().width;
+    height = svg.node().getBoundingClientRect().height;
+
     // set the data and properties of link lines
     link = svg.append("g")
         .attr("class", "links")
@@ -275,10 +271,10 @@ function ticked() {
         .attr("transform", (d) => {
             const r = nodeRadius(d.value),
                 [type1, type2] = d.id.split(" "),
-                x1 = mainNodeRef[type1].x,
-                y1 = mainNodeRef[type1].y,
-                x2 = mainNodeRef[type2].x,
-                y2 = mainNodeRef[type2].y,
+                x1 = mainNodePtr[type1].x,
+                y1 = mainNodePtr[type1].y,
+                x2 = mainNodePtr[type2].x,
+                y2 = mainNodePtr[type2].y,
                 a1 = Math.atan2((d.y - y1), (d.x - x1)),
                 a2 = Math.atan2((d.y - y2), (d.x - x2)),
                 a3 = (a1 + a2) / 2;
@@ -332,7 +328,7 @@ function filterType(event, d) {
     console.log(d)
 
     let f;
-    
+
     if (d.id.split(" ").length != 1) {
         // turns on parents and self
         const [type1, type2] = d.id.split(" ");
@@ -341,30 +337,23 @@ function filterType(event, d) {
         // turns on self and those who contain self
         f = (id) => (id.includes(d.id));
     }
- 
-    node.attr("fill-opacity", (o)=> {
+
+    node.attr("fill-opacity", (o) => {
         return f(o.id) ? 1 : 0.2;
     })
 
-    nodeHalf.attr("fill-opacity", (o)=> {
+    nodeHalf.attr("fill-opacity", (o) => {
         return f(o.id) ? 1 : 0.2;
     })
 
-    link.attr("opacity", (o)=> {
+    link.attr("opacity", (o) => {
         return f(o.target.id) && f(o.source.id) ? 1 : 0.1;
     })
 }
 
 
-// update size-related forces
-d3.select(window).on("resize", function () {
-    width = +svg.node().getBoundingClientRect().width;
-    height = +svg.node().getBoundingClientRect().height;
-    updateForces();
-});
-
 // convenience function to update everything (run after UI input)
-function updateAll() {
+export function updateAll() {
     updateForces();
     updateDisplay();
 }
