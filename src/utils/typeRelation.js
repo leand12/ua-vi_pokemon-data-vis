@@ -187,7 +187,6 @@ export function updateForces() {
 }
 
 
-
 //////////// DISPLAY ////////////
 
 // generate the svg objects and force simulation
@@ -234,34 +233,26 @@ export function initializeDisplay() {
 
     nodeText = svg.append("g")
         .attr("class", "nodes-text noselect")
-        .selectAll("g")
-        .data(graph.nodes)
-        .enter().append("g")
-        .style("font-size", (d) => nodeRadius(d) * .5)
+        .selectAll("foreignObject")
+        .data(graph.nodes).enter()
+        .append("foreignObject")
+        .attr("width", d => nodeRadius(d) * 2.5)
+        .attr("height", d => nodeRadius(d) * 2.5)
 
-    nodeText
-        .append("text")
-        .attr("text-anchor", "middle")
-        .text((d) => d.id.split(" ")[0])
-        .attr("y", d => -nodeRadius(d) * (isMainNode(d) ? .15 : .3))
-
-    nodeText
-        .filter(d => !isMainNode(d))
-        .append("text")
-        .attr("text-anchor", "middle")
-        .text((d) => d.id.split(" ")[1])
-        .attr("y", d => nodeRadius(d) * .2)
-
-    nodeText
-        .append("text")
-        .attr("text-anchor", "middle")
-        .attr("font-weight", "bold")
-        .text((d) => d.value)
-        .attr("y", d => nodeRadius(d) * (isMainNode(d) ? .35 : .6))
+    nodeText.append("xhtml:div")
+        .style("font-size", (d) => `${nodeRadius(d) * .5}px`)
+        .style("text-align", "center")
+        .style("height", "100%")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("align-items", "center")
+        .append("xhtml:span")
+        .html(d => d.id.split(" ").join("<br>") + "<br><strong>" + d.value + "</strong>")
 
     // node tooltip
     node.append("title")
         .text((d) => d.id);
+
     // visualize the graph
     updateDisplay();
 }
@@ -318,7 +309,8 @@ function ticked() {
         });
 
     nodeText
-        .attr("transform", (d) => `translate(${d.x}, ${d.y})`);
+        .attr("x", (d) => d.x - nodeRadius(d) * 1.25)
+        .attr("y", (d) => d.y - nodeRadius(d) * 1.25);
 
     d3.select('#alpha_value').style('flex-basis', (simulation.alpha() * 100) + '%');
 }
@@ -370,6 +362,10 @@ function filterType(event, d) {
 
     link.attr("opacity", (o) => {
         return f(o.target.id) && f(o.source.id) ? 1 : 0.1;
+    })
+
+    nodeText.attr("opacity", (o) => {
+        return f(o.id) ? 1 : 0.2;
     })
 }
 
