@@ -68,8 +68,8 @@ export function transformData(data) {
     let types = {}, links = {};
 
     for (var d of data.pokemons) {
-        if (d.generation != 1)
-            continue;
+        // if (d.generation != 1)
+        //     continue;
 
         let dtype;
 
@@ -107,19 +107,23 @@ export function transformData(data) {
 
 //////////// FORCE SIMULATION //////////// 
 
-function nodeRadius(value) {
-    return (Math.log(value + 1) + 1) * 8;
+function nodeRadius(node) {
+    return (Math.log(node.value + 1) + 1) * 8;
 }
 
-function linkWidth(value) {
-    return (Math.log(value + 1) + 1);
+function linkWidth(link) {
+    return (Math.log(link.value + 1) + 1);
+}
+
+function isMainNode(node) {
+    return node.id.indexOf(" ") == -1;
 }
 
 // set up the simulation and event to update locations after each tick
 export function initializeSimulation() {
     // create map with node references
     for (const n of graph.nodes) {
-        if (n.id.indexOf(" ") == -1) {
+        if (isMainNode(n)) {
             mainNodePtr[n.id] = n;
         }
     }
@@ -163,7 +167,7 @@ export function updateForces() {
         .distanceMax(forceProperties.charge.distanceMax);
     simulation.force("collide")
         .strength(forceProperties.collide.strength * forceProperties.collide.enabled)
-        .radius((d) => nodeRadius(d.value) + 10)
+        .radius((d) => nodeRadius(d) + 10)
         .iterations(forceProperties.collide.iterations);
     simulation.force("forceX")
         .strength(forceProperties.forceX.strength * forceProperties.forceX.enabled)
@@ -209,7 +213,7 @@ export function initializeDisplay() {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", (d) => nodeRadius(d.value))
+        .attr("r", (d) => nodeRadius(d))
         // .attr("stroke", (d) => colours[d.id])
         .attr("fill", (d) => colours[d.id.split(" ")[0]])
         .on("click", filterType)
@@ -221,20 +225,39 @@ export function initializeDisplay() {
     nodeHalf = svg.append("g")
         .attr("class", "nodes-half")
         .selectAll("path")
-        .data(graph.nodes.filter((d) => d.id.indexOf(" ") != -1))
+        .data(graph.nodes.filter((d) => !isMainNode(d)))
         .enter().append("g").append("path")
-        .attr("d", (d) => { const r = nodeRadius(d.value); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` })
+        .attr("d", (d) => { const r = nodeRadius(d); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` })
         .attr("fill", (d) => colours[d.id.split(" ")[1]])
         .attr("mask", "url(#fade)")
         .on("click", filterType);
 
     nodeText = svg.append("g")
         .attr("class", "nodes-text noselect")
-        .selectAll("text")
+        .selectAll("g")
         .data(graph.nodes)
-        .enter().append("text")
-        .text((d) => d.id + "\n" + d.value)
-        .style("font-size", (d) => nodeRadius(d.value) * .5)
+        .enter().append("g")
+        .style("font-size", (d) => nodeRadius(d) * .5)
+
+    nodeText
+        .append("text")
+        .attr("text-anchor", "middle")
+        .text((d) => d.id.split(" ")[0])
+        .attr("y", d => -nodeRadius(d) * (isMainNode(d) ? .15 : .3))
+
+    nodeText
+        .filter(d => !isMainNode(d))
+        .append("text")
+        .attr("text-anchor", "middle")
+        .text((d) => d.id.split(" ")[1])
+        .attr("y", d => nodeRadius(d) * .2)
+
+    nodeText
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("font-weight", "bold")
+        .text((d) => d.value)
+        .attr("y", d => nodeRadius(d) * (isMainNode(d) ? .35 : .6))
 
     // node tooltip
     node.append("title")
@@ -251,7 +274,7 @@ function updateDisplay() {
     //     .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
 
     link
-        .attr("stroke-width", forceProperties.link.enabled ? (d) => linkWidth(d.value) : .5)
+        .attr("stroke-width", forceProperties.link.enabled ? (d) => linkWidth(d) : .5)
         .attr("opacity", forceProperties.link.enabled ? 0.75 : 0);
 }
 
@@ -269,7 +292,7 @@ function ticked() {
 
     nodeHalf
         .attr("transform", (d) => {
-            const r = nodeRadius(d.value),
+            const r = nodeRadius(d),
                 [type1, type2] = d.id.split(" "),
                 x1 = mainNodePtr[type1].x,
                 y1 = mainNodePtr[type1].y,
@@ -295,8 +318,7 @@ function ticked() {
         });
 
     nodeText
-        .attr("x", (d) => d.x - nodeRadius(d.value))
-        .attr("y", (d) => d.y);
+        .attr("transform", (d) => `translate(${d.x}, ${d.y})`);
 
     d3.select('#alpha_value').style('flex-basis', (simulation.alpha() * 100) + '%');
 }
