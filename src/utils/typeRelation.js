@@ -8,7 +8,7 @@ let graph;
 // an auxiliar object for halfNode orientation
 let mainNodePtr = {};
 
-let colours = {
+export const colours = {
     normal: '#A8A77A',
     fire: '#EE8130',
     water: '#6390F0',

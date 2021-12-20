@@ -12,12 +12,6 @@ code {
     monospace;
 }
 
-svg {
-  flex-basis: 100%;
-  min-width: 200px;
-  min-height: 100vh;
-}
-
 .noselect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

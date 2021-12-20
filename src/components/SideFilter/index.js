@@ -2,23 +2,18 @@ import React, { useEffect } from 'react';
 
 import * as d3 from "d3";
 
+import TypeSelect from './TypeSelect';
+import FormControl from '@mui/material/FormControl';
 import { forceProperties, updateAll } from 'utils/typeRelation';
 import './style.css';
 
 export default function SideFilter() {
 
     return (
-        <div className="controls">
+        <FormControl sx={{ m: 1 }} classes={{root: "controls"}}>
+            <TypeSelect />
             <h1>Filters</h1>
 
-            {/* <select id="select-type" className="selectpicker" multiple>
-                <option data-content="<span class='badge badge-success'>Relish</span>">Relish</option>
-                <option data-content="<span class='badge badge-info'>lkds</span>">lkds</option>
-                <option data-content="<span class='badge badge-danger'>Reldsfish</span>">Reldsfish</option>
-                <option data-content="<span class='badge badge-warning'>Fuck</span>">Fuck</option>
-                <option data-content="<span class='badge badge-primary'>okokokokokok</span>">okokokokokok</option>
-                <option data-content="<span class='badge badge-secondary'>okokokokokok</span>">okokokokokok</option>
-            </select> */}
 
             <div className="force alpha">
                 <p><label>alpha</label> Simulation activity</p>
@@ -226,6 +221,6 @@ export default function SideFilter() {
                         }} />
                 </label>
             </div>
-        </div>
+        </FormControl>
     );
 }
