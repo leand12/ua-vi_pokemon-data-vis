@@ -1,22 +1,14 @@
+import * as d3 from "d3";
 
-var svg = d3.select("svg.type-relation"),
-    width = +svg.node().getBoundingClientRect().width,
-    height = +svg.node().getBoundingClientRect().height;
-
+let svg, width, height, simulation;
 // svg objects
-var link, node, nodeHalf, nodeText;
-// the data - an object with nodes and links
-var graph;
-var mainNodeRef = {}
+let link, node, nodeHalf, nodeText;
+// the data: an object with nodes and links
+let graph;
+// an auxiliar object for halfNode orientation
+let mainNodePtr = {};
 
-
-d3.json("data.json").then(function (data) {
-    transformData(data);
-    initializeDisplay();
-    initializeSimulation();
-});
-
-let colours = {
+export const colours = {
     normal: '#A8A77A',
     fire: '#EE8130',
     water: '#6390F0',
@@ -37,69 +29,8 @@ let colours = {
     fairy: '#D685AD',
 };
 
-function transformData(data) {
-    let types = {}, links = {};
-
-    for (var d of data.pokemons) {
-        if (d.generation != 1)
-             continue;
-
-        let dtype;
-
-        if (d.type2 && d.type1 != d.type2) {
-            dtype = [d.type1, d.type2].sort().join(" ");
-            links[dtype] = [d.type1, d.type2];
-
-            for (const t of [d.type1, d.type2]) {
-                if (!(t in types)) {
-                    types[t] = 0;
-                }
-            }
-
-        } else {
-            dtype = d.type1;
-        }
-
-        if (dtype in types) {
-            types[dtype] += 1;
-        } else {
-            types[dtype] = 1;
-        }
-    }
-
-    graph = { nodes: [], links: [] }
-    for (var [t, v] of Object.entries(types)) {
-        graph.nodes.push({ id: t, value: v });
-    }
-    for (var [s, targets] of Object.entries(links)) {
-        for (var t of targets) {
-            graph.links.push({ source: s, target: t, value: types[s] });
-        }
-    }
-}
-
-
-
-//////////// FORCE SIMULATION //////////// 
-
-// force simulator
-var simulation = d3.forceSimulation(graph);
-
-// set up the simulation and event to update locations after each tick
-function initializeSimulation() {
-    simulation.nodes(graph.nodes);
-    initializeForces();
-    simulation.on("tick", ticked);
-
-    for (const n of graph.nodes) {
-        if (n.id.indexOf(" ") == -1) {
-            mainNodeRef[n.id] = n;
-        }
-    }
-}
-
 // values for all forces
-forceProperties = {
+export const forceProperties = {
     center: {
         x: 0.5,
         y: 0.5
@@ -133,14 +64,74 @@ forceProperties = {
     }
 }
 
-$('#select-type').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-    console.log(e, clickedIndex, isSelected, previousValue);
-    console.log($('#select-type').val());
-});
+export function transformData(data) {
+    let types = {}, links = {};
+
+    for (var d of data.pokemons) {
+        // if (d.generation != 1)
+        //     continue;
+
+        let dtype;
+
+        if (d.type2 && d.type1 != d.type2) {
+            dtype = [d.type1, d.type2].sort().join(" ");
+            links[dtype] = [d.type1, d.type2];
+
+            for (const t of [d.type1, d.type2]) {
+                if (!(t in types)) {
+                    types[t] = 0;
+                }
+            }
+        } else {
+            dtype = d.type1;
+        }
+
+        if (dtype in types) {
+            types[dtype] += 1;
+        } else {
+            types[dtype] = 1;
+        }
+    }
+
+    graph = { nodes: [], links: [] }
+    for (var [t, v] of Object.entries(types)) {
+        graph.nodes.push({ id: t, value: v });
+    }
+    for (var [s, targets] of Object.entries(links)) {
+        for (var t of targets) {
+            graph.links.push({ source: s, target: t, value: types[s] });
+        }
+    }
+}
 
 
-// add forces to the simulation
-function initializeForces() {
+//////////// FORCE SIMULATION //////////// 
+
+function nodeRadius(node) {
+    return (Math.log(node.value + 1) + 1) * 8;
+}
+
+function linkWidth(link) {
+    return (Math.log(link.value + 1) + 1);
+}
+
+function isMainNode(node) {
+    return node.id.indexOf(" ") == -1;
+}
+
+// set up the simulation and event to update locations after each tick
+export function initializeSimulation() {
+    // create map with node references
+    for (const n of graph.nodes) {
+        if (isMainNode(n)) {
+            mainNodePtr[n.id] = n;
+        }
+    }
+    // force simulator
+    simulation = d3.forceSimulation(graph);
+
+    simulation.nodes(graph.nodes);
+
     // add forces and associate each with a name
     simulation
         .force("link", d3.forceLink())
@@ -149,12 +140,23 @@ function initializeForces() {
         .force("center", d3.forceCenter())
         .force("forceX", d3.forceX())
         .force("forceY", d3.forceY());
+
     // apply properties to each of the forces
     updateForces();
+
+    simulation.on("tick", ticked);
+
+    // update size-related forces
+    d3.select(window).on("resize", () => {
+        width = svg.node().getBoundingClientRect().width;
+        height = +svg.node().getBoundingClientRect().height;
+        updateForces();
+    });
 }
 
+
 // apply new force properties
-function updateForces() {
+export function updateForces() {
     // get each force by name and update the properties
     simulation.force("center")
         .x(width * forceProperties.center.x)
@@ -165,7 +167,7 @@ function updateForces() {
         .distanceMax(forceProperties.charge.distanceMax);
     simulation.force("collide")
         .strength(forceProperties.collide.strength * forceProperties.collide.enabled)
-        .radius((d) => nodeRadius(d.value) + 10)
+        .radius((d) => nodeRadius(d) + 10)
         .iterations(forceProperties.collide.iterations);
     simulation.force("forceX")
         .strength(forceProperties.forceX.strength * forceProperties.forceX.enabled)
@@ -185,19 +187,16 @@ function updateForces() {
 }
 
 
-function nodeRadius(value) {
-    return (Math.log(value + 1) + 1) * 8;
-}
-
-function linkWidth(value) {
-    return (Math.log(value + 1) + 1);
-}
-
-
 //////////// DISPLAY ////////////
 
 // generate the svg objects and force simulation
-function initializeDisplay() {
+export function initializeDisplay() {
+    svg = d3.select("svg.type-relation");
+    svg.selectAll("*:not(defs, defs *)").remove();
+
+    width = svg.node().getBoundingClientRect().width;
+    height = svg.node().getBoundingClientRect().height;
+
     // set the data and properties of link lines
     link = svg.append("g")
         .attr("class", "links")
@@ -213,7 +212,7 @@ function initializeDisplay() {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", (d) => nodeRadius(d.value))
+        .attr("r", (d) => nodeRadius(d))
         // .attr("stroke", (d) => colours[d.id])
         .attr("fill", (d) => colours[d.id.split(" ")[0]])
         .on("click", filterType)
@@ -225,24 +224,35 @@ function initializeDisplay() {
     nodeHalf = svg.append("g")
         .attr("class", "nodes-half")
         .selectAll("path")
-        .data(graph.nodes.filter((d) => d.id.indexOf(" ") != -1))
+        .data(graph.nodes.filter((d) => !isMainNode(d)))
         .enter().append("g").append("path")
-        .attr("d", (d) => { const r = nodeRadius(d.value); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` })
+        .attr("d", (d) => { const r = nodeRadius(d); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` })
         .attr("fill", (d) => colours[d.id.split(" ")[1]])
         .attr("mask", "url(#fade)")
         .on("click", filterType);
 
     nodeText = svg.append("g")
         .attr("class", "nodes-text noselect")
-        .selectAll("text")
-        .data(graph.nodes)
-        .enter().append("text")
-        .text((d) => d.id + "\n" + d.value)
-        .style("font-size", (d) => nodeRadius(d.value) * .5)
+        .selectAll("foreignObject")
+        .data(graph.nodes).enter()
+        .append("foreignObject")
+        .attr("width", d => nodeRadius(d) * 2.5)
+        .attr("height", d => nodeRadius(d) * 2.5)
+
+    nodeText.append("xhtml:div")
+        .style("font-size", (d) => `${nodeRadius(d) * .5}px`)
+        .style("text-align", "center")
+        .style("height", "100%")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("align-items", "center")
+        .append("xhtml:span")
+        .html(d => d.id.split(" ").join("<br>") + "<br><strong>" + d.value + "</strong>")
 
     // node tooltip
     node.append("title")
         .text((d) => d.id);
+
     // visualize the graph
     updateDisplay();
 }
@@ -255,7 +265,7 @@ function updateDisplay() {
     //     .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
 
     link
-        .attr("stroke-width", forceProperties.link.enabled ? (d) => linkWidth(d.value) : .5)
+        .attr("stroke-width", forceProperties.link.enabled ? (d) => linkWidth(d) : .5)
         .attr("opacity", forceProperties.link.enabled ? 0.75 : 0);
 }
 
@@ -273,12 +283,12 @@ function ticked() {
 
     nodeHalf
         .attr("transform", (d) => {
-            const r = nodeRadius(d.value),
+            const r = nodeRadius(d),
                 [type1, type2] = d.id.split(" "),
-                x1 = mainNodeRef[type1].x,
-                y1 = mainNodeRef[type1].y,
-                x2 = mainNodeRef[type2].x,
-                y2 = mainNodeRef[type2].y,
+                x1 = mainNodePtr[type1].x,
+                y1 = mainNodePtr[type1].y,
+                x2 = mainNodePtr[type2].x,
+                y2 = mainNodePtr[type2].y,
                 a1 = Math.atan2((d.y - y1), (d.x - x1)),
                 a2 = Math.atan2((d.y - y2), (d.x - x2)),
                 a3 = (a1 + a2) / 2;
@@ -299,8 +309,8 @@ function ticked() {
         });
 
     nodeText
-        .attr("x", (d) => d.x - nodeRadius(d.value))
-        .attr("y", (d) => d.y);
+        .attr("x", (d) => d.x - nodeRadius(d) * 1.25)
+        .attr("y", (d) => d.y - nodeRadius(d) * 1.25);
 
     d3.select('#alpha_value').style('flex-basis', (simulation.alpha() * 100) + '%');
 }
@@ -332,7 +342,7 @@ function filterType(event, d) {
     console.log(d)
 
     let f;
-    
+
     if (d.id.split(" ").length != 1) {
         // turns on parents and self
         const [type1, type2] = d.id.split(" ");
@@ -341,30 +351,27 @@ function filterType(event, d) {
         // turns on self and those who contain self
         f = (id) => (id.includes(d.id));
     }
- 
-    node.attr("fill-opacity", (o)=> {
+
+    node.attr("fill-opacity", (o) => {
         return f(o.id) ? 1 : 0.2;
     })
 
-    nodeHalf.attr("fill-opacity", (o)=> {
+    nodeHalf.attr("fill-opacity", (o) => {
         return f(o.id) ? 1 : 0.2;
     })
 
-    link.attr("opacity", (o)=> {
+    link.attr("opacity", (o) => {
         return f(o.target.id) && f(o.source.id) ? 1 : 0.1;
+    })
+
+    nodeText.attr("opacity", (o) => {
+        return f(o.id) ? 1 : 0.2;
     })
 }
 
 
-// update size-related forces
-d3.select(window).on("resize", function () {
-    width = +svg.node().getBoundingClientRect().width;
-    height = +svg.node().getBoundingClientRect().height;
-    updateForces();
-});
-
 // convenience function to update everything (run after UI input)
-function updateAll() {
+export function updateAll() {
     updateForces();
     updateDisplay();
 }
