@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import * as d3 from "d3";
 
 import TypeSelect from './TypeSelect';
+import GenSelect from './GenSelect';
 import FormControl from '@mui/material/FormControl';
 import { forceProperties, updateAll } from 'utils/typeRelation';
 import './style.css';
@@ -11,9 +12,10 @@ export default function SideFilter() {
 
     return (
         <FormControl sx={{ m: 1 }} classes={{root: "controls"}}>
-            <TypeSelect />
             <h1>Filters</h1>
 
+            <TypeSelect />
+            <GenSelect />
 
             <div className="force alpha">
                 <p><label>alpha</label> Simulation activity</p>

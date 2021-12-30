@@ -6,8 +6,11 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
+import FormControl from '@mui/material/FormControl';
 
 import { colours } from 'utils/typeRelation';
+
+import useFilterStore from 'stores/useFilterStore';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -20,12 +23,12 @@ const MenuProps = {
     },
 };
 
-const names = Object.keys(colours);
+const types = Object.keys(colours);
 
-function getStyles(name, personName, theme) {
+function getStyles(name, names, theme) {
     return {
         fontWeight:
-            personName.indexOf(name) === -1
+            names.indexOf(name) === -1
                 ? theme.typography.fontWeightRegular
                 : theme.typography.fontWeightMedium,
     };
@@ -33,48 +36,49 @@ function getStyles(name, personName, theme) {
 
 export default function TypeSelect() {
     const theme = useTheme();
-    const [personName, setPersonName] = React.useState([]);
+    const filters = useFilterStore(state => state.filters);
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
-            // On autofill we get a the stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
+
+        // On autofill we get a the stringified value.
+        const types = typeof value === 'string' ? value.split(',') : value;
+
+        useFilterStore.getState().setFilters({ types })
     };
 
     return (
-        <div>
-            <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
+        <FormControl style={{ position: 'relative', margin: '2em 0 0 0' }}>
+            <InputLabel id="type-select-label">Types</InputLabel>
             <Select
-                labelId="demo-multiple-chip-label"
-                id="demo-multiple-chip"
+                labelId="type-select-label"
+                id="type-select"
                 multiple
-                value={personName}
+                value={filters.types}
                 onChange={handleChange}
-                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                input={<OutlinedInput id="type-select-input" label="Types" />}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (
-                            <Chip key={value} label={value} sx={{backgroundColor: colours[value]}} />
+                            <Chip key={value} label={value} sx={{ backgroundColor: colours[value] }} />
                         ))}
                     </Box>
                 )}
                 sx={{ width: "100%" }}
                 MenuProps={MenuProps}
             >
-                {names.map((name) => (
+                {types.map((type) => (
                     <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
+                        key={type}
+                        value={type}
+                        style={getStyles(type, filters.types, theme)}
                     >
-                        {name}
+                        {type}
                     </MenuItem>
                 ))}
             </Select>
-        </div>
+        </FormControl>
     );
 }
