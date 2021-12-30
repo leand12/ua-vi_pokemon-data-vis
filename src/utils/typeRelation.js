@@ -11,7 +11,7 @@ let mainNodePtr = {};
 
 let initial_data; // TODO:  keeps the initial data and its not changed
 
-let current_filters = {"types": [], "generations": [1,2,3]}; // TODO: global filter variables
+let current_filters = {"types": [], "generations": [1]}; // TODO: global filter variables
 
 // keeps track of the selected node
 let current_node;
@@ -115,17 +115,7 @@ export function transformData(data) {
 
 
 function filterData() {
-    /*
-        Uses the global variable data that is common to all files and filter the data.
-        @param: types -> List[String]
-        @param: id -> Int
-        @param: name -> String
 
-        TODO: add the parameters as needed 
-        This function will be used by every graphical representation and it should
-        change the global variable data.
-
-    */
     let pk_data = [];
 
     for(let pk of initial_data) {
@@ -385,14 +375,13 @@ function filterType(event, d) {
     console.log("clicked on type", d.id);
     console.log(d)
     
-    current_filters.types = d.id.split(" ")
-    filterData()
     let f;
     
     if(current_node == d.id) {
         // Selecting the current node
         f = () => (true);
         current_node = "";
+        current_filters.types = [];
     } else {
         // Selecting a node of a 1type or 2type
         
@@ -405,8 +394,11 @@ function filterType(event, d) {
             f = (id) => (id.includes(d.id));
         }
         current_node = d.id;
+        current_filters.types = d.id.split(" ")
     }
     
+    filterData();
+
     node.attr("fill-opacity", (o) => {
         return f(o.id) ? 1 : 0.2;
     })
