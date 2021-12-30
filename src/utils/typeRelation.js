@@ -8,6 +8,14 @@ let graph;
 // an auxiliar object for halfNode orientation
 let mainNodePtr = {};
 
+
+let initial_data; // TODO:  keeps the initial data and its not changed
+
+let current_filters = {"types": [], "generations": [1,2,3]}; // TODO: global filter variables
+
+// keeps track of the selected node
+let current_node;
+
 export const colours = {
     normal: '#A8A77A',
     fire: '#EE8130',
@@ -67,9 +75,10 @@ export const forceProperties = {
 export function transformData(data) {
     let types = {}, links = {};
 
-    for (var d of data.pokemons) {
-        // if (d.generation != 1)
-        //     continue;
+    initial_data = data.pokemons;
+    const n_data = filterData();
+    for (var d of n_data) {
+       
 
         let dtype;
 
@@ -104,6 +113,41 @@ export function transformData(data) {
     }
 }
 
+
+function filterData() {
+    /*
+        Uses the global variable data that is common to all files and filter the data.
+        @param: types -> List[String]
+        @param: id -> Int
+        @param: name -> String
+
+        TODO: add the parameters as needed 
+        This function will be used by every graphical representation and it should
+        change the global variable data.
+
+    */
+    let pk_data = [];
+
+    for(let pk of initial_data) {
+
+        let tp1 = pk.type1;
+        let tp2 = pk.type2;
+
+        let in_type = true;
+        for(let f_type of current_filters.types) {
+            in_type &= tp1 == f_type || tp2 == f_type;
+        }
+
+        let in_generation = current_filters.generations.includes(pk.generation);
+
+        if (in_type && in_generation) {
+            pk_data.push(pk)
+        }
+
+    }
+    console.log(pk_data);
+    return pk_data;
+}
 
 //////////// FORCE SIMULATION //////////// 
 
@@ -340,18 +384,29 @@ function dragended(event, d) {
 function filterType(event, d) {
     console.log("clicked on type", d.id);
     console.log(d)
-
+    
+    current_filters.types = d.id.split(" ")
+    filterData()
     let f;
-
-    if (d.id.split(" ").length != 1) {
-        // turns on parents and self
-        const [type1, type2] = d.id.split(" ");
-        f = (id) => ([type1, type2, d.id].includes(id));
+    
+    if(current_node == d.id) {
+        // Selecting the current node
+        f = () => (true);
+        current_node = "";
     } else {
-        // turns on self and those who contain self
-        f = (id) => (id.includes(d.id));
+        // Selecting a node of a 1type or 2type
+        
+        if (d.id.split(" ").length != 1) {
+            // turns on parents and self
+            const [type1, type2] = d.id.split(" ");
+            f = (id) => ([type1, type2, d.id].includes(id));
+        } else {
+            // turns on self and those who contain self
+            f = (id) => (id.includes(d.id));
+        }
+        current_node = d.id;
     }
-
+    
     node.attr("fill-opacity", (o) => {
         return f(o.id) ? 1 : 0.2;
     })
