@@ -2,20 +2,29 @@ import React, { useEffect } from 'react';
 
 import * as d3 from "d3";
 
+import useFilterStore from 'stores/useFilterStore';
 import {
     transformData, 
     initializeDisplay, 
-    initializeSimulation } from 'utils/typeRelation';
-import data from "archive/pokemon.json";
+    initializeSimulation,
+    changeOpacity } from 'utils/typeRelation';
 import './style.css';
 
 export default function ChartTypeRelation() {
 
+    const pokemons = useFilterStore(state => state.pokemonsTR);
+    const filters = useFilterStore(state => state.filters);
+
     useEffect(() => {
-        transformData(data);
+        transformData(pokemons);
         initializeDisplay();
         initializeSimulation();
-    }, []);
+        changeOpacity();
+    }, [pokemons]);
+
+    useEffect(() => {
+        changeOpacity();
+    }, [filters.types, filters.typesSelection]);
 
     return (
         <svg className="type-relation">

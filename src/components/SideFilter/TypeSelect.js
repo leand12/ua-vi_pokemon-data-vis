@@ -50,7 +50,7 @@ export default function TypeSelect() {
     };
 
     return (
-        <FormControl style={{ position: 'relative', margin: '2em 0 0 0' }}>
+        <FormControl style={{ position: 'relative', margin: '1.5em 0' }}>
             <InputLabel id="type-select-label">Types</InputLabel>
             <Select
                 labelId="type-select-label"

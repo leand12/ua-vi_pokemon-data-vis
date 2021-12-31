@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import * as d3 from "d3";
 
 import TypeSelect from './TypeSelect';
+import TypeSwitch from './TypeSwitch';
 import GenSelect from './GenSelect';
 import FormControl from '@mui/material/FormControl';
 import { forceProperties, updateAll } from 'utils/typeRelation';
@@ -15,6 +16,7 @@ export default function SideFilter() {
             <h1>Filters</h1>
 
             <TypeSelect />
+            <TypeSwitch />
             <GenSelect />
 
             <div className="force alpha">

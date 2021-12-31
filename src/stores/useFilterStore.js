@@ -1,78 +1,56 @@
 import create from "zustand";
 import { combine } from "zustand/middleware";
+import data from "archive/pokemon.json";
 
-const filterPokemons = (pokemons, filters) => {
+const filterPokemons = (filters) => {
+    const pokemons = [],
+        pokemonsTR = [];  // pokemons used in TypeRelation filtered regardless its type
 
-    return pokemons.filter(p => {
-        let add = true;
+    for (const p of data.pokemons) {
+        let add = true, addTR = true;
 
         if (filters.typesSelection === 'any') {
             if (![p.type1, p.type2].some(t => filters.types.includes(t)))
-                add = false;            
+                add = false;
         } else if (filters.typesSelection === 'all') {
             if (![p.type1, p.type2].every(t => filters.types.includes(t)))
                 add = false;
         }
 
-        if (!filters.generations.includes(p.generation))
-            add = false;
+        if (!filters.generations.includes(p.generation)) {
+            add = addTR = false;
+        }
 
-        return add;
-    });
+        if (add) pokemons.push(p);
+        if (addTR) pokemonsTR.push(p);
+    }
+
+    return { pokemons, pokemonsTR };
+}
+
+const initFilters = {
+    types: ['fire', 'water'],
+    typesSelection: 'all',
+    generations: [1],
 }
 
 const useFilterStore = create(
     combine(
         {
-            filters: {
-                types: [],
-                typesSelection: 'any',
-                generations: [1],
-            },
-            pokemons: [],
+            filters: initFilters,
+            ...filterPokemons(initFilters),
         },
         (set, get) => ({
-            setFilters: (filters) => {
+            setFilters: (newfilters) => {
                 return set(() => {
-                    filters = {...get().filters, ...filters};
-                    const pokemons = filterPokemons(get().pokemons, filters);
-                    return { filters, pokemons }
+                    const filters = { ...get().filters, ...newfilters };
+                    const { pokemons, pokemonsTR } = filterPokemons(filters);
+                    if ('types' in newfilters || 'typesSelection' in newfilters) {
+                        return { filters, pokemons };
+                    }
+                    return { filters, pokemons, pokemonsTR };
                 })
-            },
-            setPokemons: (pokemons) => {
-                return set(() => {
-                    pokemons = filterPokemons(pokemons, get().filters);
-                    return { pokemons };
-                });
-            },
-
-            // wirePlayers: (ids: string[], merge: boolean) => {
-            //     return set((s) => {
-            //         if (merge) {
-            //             const groupPlayers = {...s.groupPlayers};
-            //             for (const id of ids)
-            //                 groupPlayers[id] = { requested: false};
-            //             return { groupPlayers };
-            //         }
-            //         const groupPlayers = {} as Record<string, Player2>;
-            //         for (const id of ids)
-            //             groupPlayers[id] = { requested: false};
-            //         return { ...s, groupPlayers };
-            //     }, !merge);
-            // },
-            // movePlayer: (id: string, position: Vector, velocity: Vector) => {
-            //     return set((s) => {
-            //         const players = {...s.players};
-            //         players[id] = { position: position, velocity: velocity };
-            //         return { players };
-            //     });
-            // },
-            // setGroups: (grps: Record<string, string[]>) => {
-            //     return set((s) => {
-            //         return { ...s, groups: grps };
-            //     }, true);
-            // },
-
+            }
         })
     )
 );

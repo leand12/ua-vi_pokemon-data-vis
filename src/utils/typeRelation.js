@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import useFilterStore from 'stores/useFilterStore';
 
 let svg, width, height, simulation;
 // svg objects
@@ -8,10 +9,6 @@ let graph;
 // an auxiliar object for halfNode orientation
 let mainNodePtr = {};
 
-
-let initial_data; // TODO:  keeps the initial data and its not changed
-
-let current_filters = {"types": [], "generations": [1]}; // TODO: global filter variables
 
 // keeps track of the selected node
 let current_node;
@@ -75,11 +72,7 @@ export const forceProperties = {
 export function transformData(data) {
     let types = {}, links = {};
 
-    initial_data = data.pokemons;
-    const n_data = filterData();
-    for (var d of n_data) {
-       
-
+    for (var d of data) {
         let dtype;
 
         if (d.type2 && d.type1 != d.type2) {
@@ -113,31 +106,6 @@ export function transformData(data) {
     }
 }
 
-
-function filterData() {
-
-    let pk_data = [];
-
-    for(let pk of initial_data) {
-
-        let tp1 = pk.type1;
-        let tp2 = pk.type2;
-
-        let in_type = true;
-        for(let f_type of current_filters.types) {
-            in_type &= tp1 == f_type || tp2 == f_type;
-        }
-
-        let in_generation = current_filters.generations.includes(pk.generation);
-
-        if (in_type && in_generation) {
-            pk_data.push(pk)
-        }
-
-    }
-    console.log(pk_data);
-    return pk_data;
-}
 
 //////////// FORCE SIMULATION //////////// 
 
@@ -375,44 +343,54 @@ function filterType(event, d) {
     console.log("clicked on type", d.id);
     console.log(d)
     
-    let f;
-    
     if(current_node == d.id) {
         // Selecting the current node
-        f = () => (true);
         current_node = "";
-        current_filters.types = [];
+        useFilterStore.getState().setFilters({types: []});
     } else {
         // Selecting a node of a 1type or 2type
         
-        if (d.id.split(" ").length != 1) {
+        if (d.id.indexOf(" ") != -1) {
             // turns on parents and self
-            const [type1, type2] = d.id.split(" ");
-            f = (id) => ([type1, type2, d.id].includes(id));
+            useFilterStore.getState().setFilters({types: d.id.split(" "), typesSelection: 'all'});
         } else {
             // turns on self and those who contain self
-            f = (id) => (id.includes(d.id));
+            useFilterStore.getState().setFilters({types: [d.id], typesSelection: 'any'});
         }
         current_node = d.id;
-        current_filters.types = d.id.split(" ")
+    }
+
+    changeOpacity();
+}
+
+export function changeOpacity() {
+    const { types, typesSelection } = useFilterStore.getState().filters;
+
+    const filterType = (id) => {
+        if (typesSelection === 'any') {
+            if (!id.split(" ").some(t => types.includes(t)))
+                return false;
+        } else if (typesSelection === 'all') {
+            if (!id.split(" ").every(t => types.includes(t)))
+                return false;
+        }
+        return true;
     }
     
-    filterData();
-
     node.attr("fill-opacity", (o) => {
-        return f(o.id) ? 1 : 0.2;
+        return filterType(o.id) ? 1 : 0.2;
     })
 
     nodeHalf.attr("fill-opacity", (o) => {
-        return f(o.id) ? 1 : 0.2;
+        return filterType(o.id) ? 1 : 0.2;
     })
 
     link.attr("opacity", (o) => {
-        return f(o.target.id) && f(o.source.id) ? 1 : 0.1;
+        return filterType(o.target.id) && filterType(o.source.id) ? 1 : 0.1;
     })
 
     nodeText.attr("opacity", (o) => {
-        return f(o.id) ? 1 : 0.2;
+        return filterType(o.id) ? 1 : 0.2;
     })
 }
 

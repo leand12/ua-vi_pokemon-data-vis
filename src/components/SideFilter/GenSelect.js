@@ -52,7 +52,7 @@ export default function GenSelect() {
     };
 
     return (
-        <FormControl style={{ position: 'relative', margin: '2em 0 0 0' }}>
+        <FormControl style={{ position: 'relative', margin: '1.5em 0' }}>
             <InputLabel id="gen-select-label">Generations</InputLabel>
             <Select
                 labelId="gen-select-label"
