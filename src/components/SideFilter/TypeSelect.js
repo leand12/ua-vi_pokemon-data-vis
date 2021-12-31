@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import { colours } from 'utils/typeRelation';
 
@@ -49,6 +50,16 @@ export default function TypeSelect() {
         useFilterStore.getState().setFilters({ types })
     };
 
+    const handleChipDelete = (value) => {
+        const types = useFilterStore.getState().filters.types
+            .filter(t => t != value);
+        useFilterStore.getState().setFilters({ types });
+    };
+
+    const handleChipMouseDown = (event) => {
+        event.stopPropagation();
+    };
+
     return (
         <FormControl style={{ position: 'relative', margin: '1.5em 0' }}>
             <InputLabel id="type-select-label">Types</InputLabel>
@@ -62,7 +73,10 @@ export default function TypeSelect() {
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (
-                            <Chip key={value} label={value} sx={{ backgroundColor: colours[value] }} />
+                            <Chip key={value} label={value} sx={{ backgroundColor: colours[value] }}
+                                onDelete={() => handleChipDelete(value)} deleteIcon={
+                                    <CancelIcon name={value} onMouseDown={handleChipMouseDown} />
+                                } />
                         ))}
                     </Box>
                 )}

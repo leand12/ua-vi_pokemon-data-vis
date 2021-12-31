@@ -340,8 +340,6 @@ function dragended(event, d) {
 }
 
 function filterType(event, d) {
-    console.log("clicked on type", d.id);
-    console.log(d)
     
     if(current_node == d.id) {
         // Selecting the current node

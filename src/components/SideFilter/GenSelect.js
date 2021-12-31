@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import useFilterStore from 'stores/useFilterStore';
 
@@ -25,7 +26,6 @@ const generations = [1, 2, 3, 4, 5, 6, 7];
 
 
 function getStyles(name, names, theme) {
-    console.log(names);
     return {
         fontWeight:
             names.indexOf(name) === -1
@@ -46,9 +46,18 @@ export default function GenSelect() {
         // On autofill we get a the stringified value.
         let generations = typeof value === 'string' ? value.split(',') : value;
         generations = generations.map(t => parseInt(t));
-        
-        console.log(generations);
+
         useFilterStore.getState().setFilters({ generations });
+    };
+
+    const handleChipDelete = (value) => {
+        const generations = useFilterStore.getState().filters.generations
+            .filter(g => g != value);
+        useFilterStore.getState().setFilters({ generations });
+    };
+
+    const handleChipMouseDown = (event) => {
+        event.stopPropagation();
     };
 
     return (
@@ -64,7 +73,9 @@ export default function GenSelect() {
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (
-                            <Chip key={value} label={value} />
+                            <Chip key={value} label={value} onDelete={() => handleChipDelete(value)} deleteIcon={
+                                <CancelIcon name={value} onMouseDown={handleChipMouseDown} />
+                            } />
                         ))}
                     </Box>
                 )}
@@ -81,6 +92,7 @@ export default function GenSelect() {
                     </MenuItem>
                 ))}
             </Select>
+
         </FormControl>
     );
 }
