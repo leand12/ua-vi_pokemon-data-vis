@@ -2,8 +2,28 @@ import * as d3 from "d3";
 
 
 export function loadRadar(pokemons) {
+    
+    if(pokemons.length > 2) {
+        return;
+    }
 
-    RadarChart.draw(".radar-chart", pokemons);
+    let data = [];
+    for(let pk of pokemons) {
+        console.log(pk.name)
+        data.push({
+            name: pk.name,
+            axes: [
+                {axis: "hp", value: pk.hp},
+                {axis: "attack", value: pk.attack},
+                {axis: "defense", value: pk.defense},
+                {axis: "special attack", value: pk.sp_attack},
+                {axis: "special defense", value: pk.sp_defense},
+                {axis: "speed", value: pk.speed},
+            ]
+        })
+    }
+
+    RadarChart.draw(".radar-chart", data);
 
 }
 
@@ -136,7 +156,6 @@ let RadarChart = {
                 .style("stroke", cfg.color(series))
                 .attr("points", function (d) {
                     let str = "";
-                    console.log(d)
                     for (let pti = 0; pti < d.length; pti++) {
                         str += d[pti][0] + "," + d[pti][1] + " ";
                     }
