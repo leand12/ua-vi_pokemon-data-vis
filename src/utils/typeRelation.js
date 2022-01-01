@@ -128,10 +128,14 @@ export function initializeSimulation() {
             mainNodePtr[n.id] = n;
         }
     }
+    if (simulation) {
+        updateForces();
+        return;
+    }
     // force simulator
-    simulation = d3.forceSimulation(graph);
+    simulation = d3.forceSimulation(graph.nodes);
 
-    simulation.nodes(graph.nodes);
+    // simulation.nodes();
 
     // add forces and associate each with a name
     simulation
@@ -140,24 +144,10 @@ export function initializeSimulation() {
         .force("collide", d3.forceCollide())
         .force("center", d3.forceCenter())
         .force("forceX", d3.forceX())
-        .force("forceY", d3.forceY());
+        .force("forceY", d3.forceY())
+        // .alphaTarget(1)
+        .on("tick", ticked);
 
-    // apply properties to each of the forces
-    updateForces();
-
-    simulation.on("tick", ticked);
-
-    // update size-related forces
-    d3.select(window).on("resize", () => {
-        width = svg.node().getBoundingClientRect().width;
-        height = +svg.node().getBoundingClientRect().height;
-        updateForces();
-    });
-}
-
-
-// apply new force properties
-export function updateForces() {
     // get each force by name and update the properties
     simulation.force("center")
         .x(width * forceProperties.center.x)
@@ -182,6 +172,29 @@ export function updateForces() {
         .iterations(forceProperties.link.iterations)
         .links(graph.links);
 
+    // update size-related forces
+    d3.select(window).on("resize", () => {
+        width = svg.node().getBoundingClientRect().width;
+        height = +svg.node().getBoundingClientRect().height;
+        updateForces();
+    });
+}
+
+
+// apply new force properties
+export function updateForces() {
+
+    // Update and restart the simulation.
+    simulation.nodes(graph.nodes).force("collide")
+        .strength(forceProperties.collide.strength * forceProperties.collide.enabled)
+        .radius((d) => nodeRadius(d) + 10)
+        .iterations(forceProperties.collide.iterations);;
+
+    simulation.force("link")
+        .id((d) => d.id)
+        .distance(forceProperties.link.distance)
+        .iterations(forceProperties.link.iterations).links(graph.links);
+
     // updates ignored until this is run
     // restarts the simulation (important if simulation has already slowed down)
     simulation.alpha(1).restart();
@@ -193,7 +206,10 @@ export function updateForces() {
 // generate the svg objects and force simulation
 export function initializeDisplay() {
     svg = d3.select("svg.type-relation");
-    // svg.selectAll("*:not(defs, defs *)").remove();
+
+    // const t = d3.transition()
+    //     .duration(750)
+    //     .ease(d3.easeLinear);
 
     width = svg.node().getBoundingClientRect().width;
     height = svg.node().getBoundingClientRect().height;
@@ -229,9 +245,13 @@ export function initializeDisplay() {
         .text((d) => d.id);
 
     node = node.merge(nodeData)
+        // .transition(t)
         .attr("r", (d) => nodeRadius(d));
 
-    nodeData.exit().remove();
+    nodeData.exit()
+        // .transition(t)
+        // .attr("r", 1e-6)
+        .remove();
 
     const nodeHalfData = svg.select("g.nodes-half")
         .selectAll("path")
