@@ -5,7 +5,7 @@ let svg, width, height, simulation;
 // svg objects
 let link, node, nodeHalf, nodeText;
 // the data: an object with nodes and links
-let graph;
+let graph = { nodes: [], links: [] };
 // an auxiliar object for halfNode orientation
 let mainNodePtr = {};
 
@@ -71,7 +71,7 @@ export const forceProperties = {
 export function transformData(data) {
     let types = {}, links = {};
 
-    for (var d of data) {
+    for (const d of data) {
         let dtype;
 
         if (d.type2 && d.type1 != d.type2) {
@@ -94,14 +94,41 @@ export function transformData(data) {
         }
     }
 
-    graph = { nodes: [], links: [] }
-    for (var [t, v] of Object.entries(types)) {
-        graph.nodes.push({ id: t, value: v });
+    let oldGraph = { nodes: [...graph.nodes], links: [...graph.links] };
+    graph = { nodes: [], links: [] };
+
+    // push already existent nodes to preserve positions
+    for (const n of oldGraph.nodes) {
+        if (n.id in types) {
+            console.log("k")
+            n.value = types[n.id];
+            graph.nodes.push(n);
+        }
     }
-    for (var [s, targets] of Object.entries(links)) {
-        for (var t of targets) {
+    // push already existent links to preserve positions
+    for (const l of oldGraph.links) {
+        console.log('ok')
+        if (l.source in links) {
+            console.log('>', types[l.source]);
+            l.value = types[l.source];
+            graph.links.push(l);
+        }
+    }
+    // create new links
+    for (const l of graph.links) {
+        delete links[l.source];
+    }
+    for (const [s, targets] of Object.entries(links)) {
+        for (const t of targets) {
             graph.links.push({ source: s, target: t, value: types[s] });
         }
+    }
+    // create new nodes
+    for (const n of graph.nodes) {
+        delete types[n.id];
+    }
+    for (const [t, v] of Object.entries(types)) {
+        graph.nodes.push({ id: t, value: v, x: width / 2, y: height / 2 });
     }
 }
 
@@ -145,7 +172,6 @@ export function initializeSimulation() {
         .force("center", d3.forceCenter())
         .force("forceX", d3.forceX())
         .force("forceY", d3.forceY())
-        // .alphaTarget(1)
         .on("tick", ticked);
 
     // get each force by name and update the properties
@@ -176,7 +202,17 @@ export function initializeSimulation() {
     d3.select(window).on("resize", () => {
         width = svg.node().getBoundingClientRect().width;
         height = +svg.node().getBoundingClientRect().height;
-        updateForces();
+
+        simulation.force("center")
+            .x(width * forceProperties.center.x)
+            .y(height * forceProperties.center.y);
+
+        simulation.force("forceX")
+            .strength(forceProperties.forceX.strength * forceProperties.forceX.enabled)
+            .x(width * forceProperties.forceX.x);
+        simulation.force("forceY")
+            .strength(forceProperties.forceY.strength * forceProperties.forceY.enabled)
+            .y(height * forceProperties.forceY.y);
     });
 }
 
@@ -197,7 +233,7 @@ export function updateForces() {
 
     // updates ignored until this is run
     // restarts the simulation (important if simulation has already slowed down)
-    simulation.alpha(1).restart();
+    simulation.alpha(0.5).restart();
 }
 
 
