@@ -63,7 +63,6 @@ export const forceProperties = {
         y: .5
     },
     link: {
-        enabled: true,
         distance: 100,
         iterations: 1
     }
@@ -181,7 +180,7 @@ export function updateForces() {
         .id((d) => d.id)
         .distance(forceProperties.link.distance)
         .iterations(forceProperties.link.iterations)
-        .links(forceProperties.link.enabled ? graph.links : []);
+        .links(graph.links);
 
     // updates ignored until this is run
     // restarts the simulation (important if simulation has already slowed down)
@@ -194,28 +193,30 @@ export function updateForces() {
 // generate the svg objects and force simulation
 export function initializeDisplay() {
     svg = d3.select("svg.type-relation");
-    svg.selectAll("*:not(defs, defs *)").remove();
+    // svg.selectAll("*:not(defs, defs *)").remove();
 
     width = svg.node().getBoundingClientRect().width;
     height = svg.node().getBoundingClientRect().height;
 
     // set the data and properties of link lines
-    link = svg.append("g")
-        .attr("class", "links")
+    const linkData = svg.select("g.links")
         .selectAll("line")
-        .data(graph.links)
-        .enter().append("line")
+        .data(graph.links, l => l.source + l.target);
+
+    link = linkData.enter().append("line")
         .attr("stroke", (d) => colours[d.target])
-    // .attr("stroke-width", 5);
+        .attr("opacity", 0.75)
+        .merge(linkData)
+        .attr("stroke-width", (d) => linkWidth(d));
+
+    linkData.exit().remove();
 
     // set the data and properties of node circles
-    node = svg.append("g")
-        .attr("class", "nodes")
+    const nodeData = svg.select("g.nodes")
         .selectAll("circle")
-        .data(graph.nodes)
-        .enter().append("circle")
-        .attr("r", (d) => nodeRadius(d))
-        // .attr("stroke", (d) => colours[d.id])
+        .data(graph.nodes, n => n.id);
+
+    node = nodeData.enter().append("circle")
         .attr("fill", (d) => colours[d.id.split(" ")[0]])
         .on("click", filterType)
         .call(d3.drag()
@@ -223,53 +224,55 @@ export function initializeDisplay() {
             .on("drag", dragged)
             .on("end", dragended));
 
-    nodeHalf = svg.append("g")
-        .attr("class", "nodes-half")
+    // node tooltip
+    node.append("title")
+        .text((d) => d.id);
+
+    node = node.merge(nodeData)
+        .attr("r", (d) => nodeRadius(d));
+
+    nodeData.exit().remove();
+
+    const nodeHalfData = svg.select("g.nodes-half")
         .selectAll("path")
-        .data(graph.nodes.filter((d) => !isMainNode(d)))
-        .enter().append("g").append("path")
-        .attr("d", (d) => { const r = nodeRadius(d); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` })
+        .data(graph.nodes.filter((d) => !isMainNode(d)), n => n.id);
+
+    nodeHalf = nodeHalfData.enter().append("path")
         .attr("fill", (d) => colours[d.id.split(" ")[1]])
         .attr("mask", "url(#fade)")
-        .on("click", filterType);
+        .on("click", filterType)
+        .merge(nodeHalfData)
+        .attr("d", (d) => { const r = nodeRadius(d); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` });
 
-    nodeText = svg.append("g")
-        .attr("class", "nodes-text noselect")
+    nodeHalfData.exit().remove();
+
+    const nodeTextData = svg.select("g.nodes-text")
         .selectAll("foreignObject")
-        .data(graph.nodes).enter()
-        .append("foreignObject")
-        .attr("width", d => nodeRadius(d) * 2.5)
-        .attr("height", d => nodeRadius(d) * 2.5)
+        .data(graph.nodes, n => n.id);
+
+    nodeText = nodeTextData.enter()
+        .append("foreignObject");
 
     nodeText.append("xhtml:div")
-        .style("font-size", (d) => `${nodeRadius(d) * .5}px`)
         .style("text-align", "center")
         .style("height", "100%")
         .style("display", "flex")
         .style("justify-content", "center")
         .style("align-items", "center")
-        .append("xhtml:span")
-        .html(d => d.id.split(" ").join("<br>") + "<br><strong>" + d.value + "</strong>")
+        .append("xhtml:span");
 
-    // node tooltip
-    node.append("title")
-        .text((d) => d.id);
+    nodeText = nodeText.merge(nodeTextData)
+        .attr("width", d => nodeRadius(d) * 2.5)
+        .attr("height", d => nodeRadius(d) * 2.5);
 
-    // visualize the graph
-    updateDisplay();
+    nodeText.select("div")
+        .style("font-size", (d) => `${nodeRadius(d) * .5}px`)
+        .select("span")
+        .html(d => d.id.split(" ").join("<br>") + "<br><strong>" + d.value + "</strong>");
+
+    nodeTextData.exit().remove();
 }
 
-// update the display based on the forces (but not positions)
-function updateDisplay() {
-    // node
-    //     .attr("r", forceProperties.collide.radius)
-    //     .attr("stroke", forceProperties.charge.strength > 0 ? "blue" : "red")
-    //     .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
-
-    link
-        .attr("stroke-width", forceProperties.link.enabled ? (d) => linkWidth(d) : .5)
-        .attr("opacity", forceProperties.link.enabled ? 0.75 : 0);
-}
 
 // update the display positions after each simulation tick
 function ticked() {
@@ -340,25 +343,23 @@ function dragended(event, d) {
 }
 
 function filterType(event, d) {
-    
-    if(current_node == d.id) {
+
+    if (current_node == d.id) {
         // Selecting the current node
         current_node = "";
-        useFilterStore.getState().setFilters({types: []});
+        useFilterStore.getState().setFilters({ types: [] });
     } else {
         // Selecting a node of a 1type or 2type
-        
+
         if (d.id.indexOf(" ") != -1) {
             // turns on parents and self
-            useFilterStore.getState().setFilters({types: d.id.split(" "), typesSelection: 'all'});
+            useFilterStore.getState().setFilters({ types: d.id.split(" "), typesSelection: 'all' });
         } else {
             // turns on self and those who contain self
-            useFilterStore.getState().setFilters({types: [d.id], typesSelection: 'any'});
+            useFilterStore.getState().setFilters({ types: [d.id], typesSelection: 'any' });
         }
         current_node = d.id;
     }
-
-    changeOpacity();
 }
 
 export function changeOpacity() {
@@ -374,7 +375,7 @@ export function changeOpacity() {
         }
         return true;
     }
-    
+
     node.attr("fill-opacity", (o) => {
         return filterType(o.id) ? 1 : 0.2;
     })
@@ -396,5 +397,4 @@ export function changeOpacity() {
 // convenience function to update everything (run after UI input)
 export function updateAll() {
     updateForces();
-    updateDisplay();
 }

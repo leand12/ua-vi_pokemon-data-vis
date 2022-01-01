@@ -38,6 +38,10 @@ export default function ChartTypeRelation() {
                     <rect width="1" height="1" fill="url(#fadeGrad)" />
                 </mask>
             </defs>
+            <g className="links"></g>
+            <g className="nodes"></g>
+            <g className="nodes-half"></g>
+            <g className="nodes-text noselect"></g>
         </svg>
     );
 }

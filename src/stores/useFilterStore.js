@@ -31,7 +31,7 @@ const filterPokemons = (filters) => {
 const initFilters = {
     types: ['fire', 'water'],
     typesSelection: 'all',
-    generations: [1],
+    generations: [1, 2, 3, 4, 5, 6, 7],
 }
 
 const useFilterStore = create(
