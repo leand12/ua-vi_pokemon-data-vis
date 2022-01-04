@@ -1,6 +1,5 @@
 import React from 'react';
 import { loadRadar } from "utils/radarChart";
-import { filterData } from "utils/typeRelation";
 import data from "archive/pokemon.json";
 
 
