@@ -72,7 +72,7 @@ export default function GenSelect() {
                 input={<OutlinedInput id="gen-select-input" label="Generations" />}
                 renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
+                        {selected.sort().map((value) => (
                             <Chip key={value} label={value} onDelete={() => handleChipDelete(value)} deleteIcon={
                                 <CancelIcon name={value} onMouseDown={handleChipMouseDown} />
                             } />

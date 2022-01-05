@@ -52,9 +52,9 @@ export default function SideFilter() {
             </div>
 
             <div className="force">
-                <p><label><input type="checkbox" checked
-                    onChange={() => {
-                        forceProperties.charge.enabled = this.checked;
+                <p><label><input type="checkbox" defaultChecked
+                    onClick={(e) => {
+                        forceProperties.charge.enabled = e.target.checked;
                         updateAll();
                     }} /> charge</label> Attracts
                     (+) or repels (-) nodes to/from each other.</p>
@@ -94,9 +94,9 @@ export default function SideFilter() {
             </div>
 
             <div className="force">
-                <p><label><input type="checkbox" checked
-                    onChange={() => {
-                        forceProperties.collide.enabled = this.checked; updateAll();
+                <p><label><input type="checkbox" defaultChecked
+                    onClick={(e) => {
+                        forceProperties.collide.enabled = e.target.checked; updateAll();
                     }} /> collide</label>
                     Prevents nodes from overlapping</p>
                 <label>
@@ -136,8 +136,8 @@ export default function SideFilter() {
             </div>
 
             <div className="force">
-                <p><label><input type="checkbox" onChange={() => {
-                    forceProperties.forceX.enabled = this.checked; updateAll();
+                <p><label><input type="checkbox" onClick={(e) => {
+                    forceProperties.forceX.enabled = e.target.checked; updateAll();
                 }} />
                     forceX</label> Acts like gravity. Pulls all points towards an X location.</p>
                 <label>
@@ -166,8 +166,8 @@ export default function SideFilter() {
             </div>
 
             <div className="force">
-                <p><label><input type="checkbox" onChange={() => {
-                    forceProperties.forceY.enabled = this.checked; updateAll();
+                <p><label><input type="checkbox" onClick={(e) => {
+                    forceProperties.forceY.enabled = e.target.checked; updateAll();
                 }} />
                     forceY</label> Acts like gravity. Pulls all points towards a Y location.</p>
                 <label>
@@ -196,10 +196,7 @@ export default function SideFilter() {
             </div>
 
             <div className="force">
-                <p><label><input type="checkbox" checked
-                    onChange={() => {
-                        forceProperties.link.enabled = this.checked; updateAll();
-                    }} /> link</label> Sets link
+                <p><label>link</label> Sets link
                     length</p>
                 <label title="The force will push/pull nodes to make links this long">
                     distance
