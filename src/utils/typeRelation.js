@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import useFilterStore from 'stores/useFilterStore';
+import typeRelationPos from 'archive/typeRelationPos.json';
 
 let svg, width, height, simulation;
 // svg objects
@@ -9,9 +10,11 @@ let graph = { nodes: [], links: [] };
 // an auxiliar object for halfNode orientation
 let mainNodePtr = {};
 
+let firstTransform = true;
+
 
 // keeps track of the selected node
-let current_node;
+let currentNode;
 
 export const colours = {
     normal: '#A8A77A',
@@ -100,14 +103,12 @@ export function transformData(data) {
     // push already existent nodes to preserve positions
     for (const n of oldGraph.nodes) {
         if (n.id in types) {
-            console.log("k")
             n.value = types[n.id];
             graph.nodes.push(n);
         }
     }
     // push already existent links to preserve positions
     for (const l of oldGraph.links) {
-        console.log('ok')
         if (l.source in links) {
             console.log('>', types[l.source]);
             l.value = types[l.source];
@@ -128,8 +129,25 @@ export function transformData(data) {
         delete types[n.id];
     }
     for (const [t, v] of Object.entries(types)) {
-        graph.nodes.push({ id: t, value: v, x: width / 2, y: height / 2 });
+        if (firstTransform) {
+            const { x, y } = typeRelationPos[t];
+            graph.nodes.push({ id: t, value: v, x, y, vx: 0, vy: 0 });
+        } else {
+            if (t.indexOf(" ") != -1) {
+                // not a main node
+                // create node between its 2 main nodes
+                const [type1, type2] = t.split(" "),
+                    x1 = mainNodePtr[type1].x,
+                    y1 = mainNodePtr[type1].y,
+                    x2 = mainNodePtr[type2].x,
+                    y2 = mainNodePtr[type2].y;
+                graph.nodes.push({ id: t, value: v, x: (x1 + x2) / 2, y: (y1 + y2) / 2 });
+                continue;
+            }
+            graph.nodes.push({ id: t, value: v, x: width / 2, y: height / 2 });
+        }
     }
+    firstTransform = false;
 }
 
 
@@ -160,18 +178,14 @@ export function initializeSimulation() {
         return;
     }
     // force simulator
-    simulation = d3.forceSimulation(graph.nodes);
-
-    // simulation.nodes();
-
-    // add forces and associate each with a name
-    simulation
+    simulation = d3.forceSimulation(graph.nodes)
         .force("link", d3.forceLink())
         .force("charge", d3.forceManyBody())
         .force("collide", d3.forceCollide())
         .force("center", d3.forceCenter())
         .force("forceX", d3.forceX())
         .force("forceY", d3.forceY())
+        .alpha(0)
         .on("tick", ticked);
 
     // get each force by name and update the properties
@@ -206,13 +220,6 @@ export function initializeSimulation() {
         simulation.force("center")
             .x(width * forceProperties.center.x)
             .y(height * forceProperties.center.y);
-
-        simulation.force("forceX")
-            .strength(forceProperties.forceX.strength * forceProperties.forceX.enabled)
-            .x(width * forceProperties.forceX.x);
-        simulation.force("forceY")
-            .strength(forceProperties.forceY.strength * forceProperties.forceY.enabled)
-            .y(height * forceProperties.forceY.y);
     });
 }
 
@@ -376,7 +383,9 @@ function ticked() {
     d3.select('#alpha_value').style('flex-basis', (simulation.alpha() * 100) + '%');
 }
 
-
+window.lixo = () => {
+    console.log(graph.nodes);
+}
 
 //////////// UI EVENTS ////////////
 
@@ -400,9 +409,9 @@ function dragended(event, d) {
 
 function filterType(event, d) {
 
-    if (current_node == d.id) {
+    if (currentNode == d.id) {
         // Selecting the current node
-        current_node = "";
+        currentNode = "";
         useFilterStore.getState().setFilters({ types: [] });
     } else {
         // Selecting a node of a 1type or 2type
@@ -414,7 +423,7 @@ function filterType(event, d) {
             // turns on self and those who contain self
             useFilterStore.getState().setFilters({ types: [d.id], typesSelection: 'any' });
         }
-        current_node = d.id;
+        currentNode = d.id;
     }
 }
 
