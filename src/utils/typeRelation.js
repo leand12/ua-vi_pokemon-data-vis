@@ -450,7 +450,7 @@ export function changeOpacity() {
     })
 
     link.attr("opacity", (o) => {
-        return filterType(o.target.id) && filterType(o.source.id) ? 1 : 0.1;
+        return filterType(o.target.id) && filterType(o.source.id) ? 0.75 : 0.05;
     })
 
     nodeText.attr("opacity", (o) => {
