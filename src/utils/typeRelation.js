@@ -304,6 +304,10 @@ export function initializeDisplay() {
         .attr("fill", (d) => colours[d.id.split(" ")[1]])
         .attr("mask", "url(#fade)")
         .on("click", filterType)
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended))
         .merge(nodeHalfData)
         .attr("d", (d) => { const r = nodeRadius(d); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` });
 
@@ -390,18 +394,18 @@ window.lixo = () => {
 //////////// UI EVENTS ////////////
 
 function dragstarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
     d.fy = d.y;
 }
 
 function dragged(event, d) {
+    simulation.alphaTarget(0.3).restart();
     d.fx = event.x;
     d.fy = event.y;
 }
 
 function dragended(event, d) {
-    if (!event.active) simulation.alphaTarget(0.0001);
+    simulation.alphaTarget(0.0001);
     d.fx = null;
     d.fy = null;
     event.sourceEvent.stopPropagation();
