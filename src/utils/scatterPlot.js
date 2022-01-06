@@ -38,7 +38,7 @@ export function loadScatterPlot(data, ax1, ax2) {
       .join("circle")
       .attr("r", 2)
       .attr("cx", d => (d[ax1] * scalingX + margin))
-      .attr("cy", d => ((255 - d[ax2]) * scalingY - margin))
+      .attr("cy", d => ((255 - d[ax2]) * scalingY))
       .attr("fill", "blue")
       .on("click", (e, d) => {selectPokemon(d)});
 }

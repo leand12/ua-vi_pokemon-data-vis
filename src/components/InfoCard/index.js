@@ -13,8 +13,8 @@ export default function InfoCard(props) {
         name = name.replace(" ", "-");
         name = name.replace(".", "");
         name = name.replace(":", "");
-        name = name.replace("♀", "f");
-        name = name.replace("♂", "m");
+        name = name.replace("♀", "-f");
+        name = name.replace("♂", "-m");
         name = name.replace("é", "e");
         name = name.replace("'", "");
         name = name.toLowerCase();
