@@ -1,18 +1,18 @@
-
+import useCompareStore from "stores/useCompareStore";
 import * as d3 from "d3";
 
 export function loadScatterPlot(data, ax1, ax2) {
 
     const margin = 30;
-    const scalingX = 1;
-    const scalingY = 1;
+    const scalingX = 2;
+    const scalingY = 2;
 
     let yScale = d3.scaleLinear()
-                    .domain([0, 255*scalingY])
+                    .domain([0, 255])
                     .range([255*scalingY, 0]);
 
     let xScale = d3.scaleLinear()
-                    .domain([0, 255*scalingX])
+                    .domain([0, 255])
                     .range([0, 255*scalingX]);
     
     let svg = d3.select(".scatter-chart");
@@ -21,10 +21,12 @@ export function loadScatterPlot(data, ax1, ax2) {
     
     svg.selectAll(".points").data(data)
        .join("circle")
-       .attr("r", 2)
+       .attr("r", 3)
        .attr("cx", d => (d[ax1] * scalingX + margin))
-       .attr("cy", d => ((255 - d[ax2])* scalingY - margin))
-       .attr("fill", "blue");
+       .attr("cy", d => ((255 - d[ax2])* scalingY))
+       .attr("fill", "blue")
+       .on("click", (e, d) => {selectPokemon(d)})
+       ;
 
 
 
@@ -36,6 +38,9 @@ export function loadScatterPlot(data, ax1, ax2) {
                    .attr("id", "xAxis")
                    .call(d3.axisBottom(xScale));
 
+}
 
-
+function selectPokemon(pk) {
+   console.log(pk)
+   useCompareStore.getState().setSelected(pk);
 }
