@@ -1,0 +1,11 @@
+.card-info {
+    margin: 0 auto 16px auto;
+    max-width: 750px; 
+}
+
+@media only screen and (min-width: 1200px) {
+    .card-info {
+        margin: 8px;
+        max-width: 450px;
+    }
+}

@@ -8,7 +8,7 @@ import './style.css';
 export default function Charts() {
 
     return (
-        <div className="charts">
+        <div className="charts">       
             <ChartTypeRelation />
             <ChartScatter />
             <ChartRadar />

@@ -1,7 +1,6 @@
 .controls {
     flex-basis: 300px;
     padding: 0 5px;
-    /* height: 100vh; */
     overflow: auto;
 }
 
@@ -35,7 +34,6 @@
     width: 90%;
 }
 
-/* alpha viewer */
 .controls .alpha p {
     margin-bottom: .25em;
 }

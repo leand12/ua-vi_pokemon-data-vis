@@ -2,7 +2,10 @@ import * as d3 from "d3";
 import useFilterStore from 'stores/useFilterStore';
 import typeRelationPos from 'archive/typeRelationPos.json';
 
-let svg, width, height, simulation;
+const width = 900,
+    height = 900;
+
+let svg, simulation;
 // svg objects
 let link, node, nodeHalf, nodeText;
 // the data: an object with nodes and links
@@ -185,13 +188,13 @@ export function initializeSimulation() {
         .force("center", d3.forceCenter())
         .force("forceX", d3.forceX())
         .force("forceY", d3.forceY())
-        .alpha(0)
+        .alpha(0.01)
         .on("tick", ticked);
 
     // get each force by name and update the properties
     simulation.force("center")
-        .x(width * forceProperties.center.x)
-        .y(height * forceProperties.center.y);
+        .x(width / 2)
+        .y(height / 2);
     simulation.force("charge")
         .strength(forceProperties.charge.strength * forceProperties.charge.enabled)
         .distanceMin(forceProperties.charge.distanceMin)
@@ -212,15 +215,6 @@ export function initializeSimulation() {
         .iterations(forceProperties.link.iterations)
         .links(graph.links);
 
-    // update size-related forces
-    d3.select(window).on("resize", () => {
-        width = svg.node().getBoundingClientRect().width;
-        height = +svg.node().getBoundingClientRect().height;
-
-        simulation.force("center")
-            .x(width * forceProperties.center.x)
-            .y(height * forceProperties.center.y);
-    });
 }
 
 
@@ -248,14 +242,19 @@ export function updateForces() {
 
 // generate the svg objects and force simulation
 export function initializeDisplay() {
-    svg = d3.select("svg.type-relation");
+    if (!svg) {
+        svg = d3.select("svg.type-relation");
+        svg.call(d3.zoom()
+            .scaleExtent([1, 3])
+            .translateExtent([[0, 0], [width, height]])
+            .on("zoom", function (event) {
+                svg.select("g.zoom").attr("transform", event.transform)
+            }));
+    }
 
     // const t = d3.transition()
     //     .duration(750)
     //     .ease(d3.easeLinear);
-
-    width = svg.node().getBoundingClientRect().width;
-    height = svg.node().getBoundingClientRect().height;
 
     // set the data and properties of link lines
     const linkData = svg.select("g.links")
@@ -405,7 +404,7 @@ function dragged(event, d) {
 }
 
 function dragended(event, d) {
-    simulation.alphaTarget(0.0001);
+    simulation.alphaTarget(0.01);
     d.fx = null;
     d.fy = null;
     event.sourceEvent.stopPropagation();

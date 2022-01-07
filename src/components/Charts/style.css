@@ -1,12 +1,31 @@
 .charts {
-    width: 100%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     overflow: auto;
 }
 
-.charts svg {
-    flex-basis: 100%;
-    min-width: 200px;
-    min-height: 100vh;
+.charts h1 {
+    margin: 1em;
+}
+
+.charts .container-area {
+    margin: 0 8px;
+    width: calc(100% - 16px);
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+svg.type-relation {
+    max-height: 80vh;
+}
+
+svg.type-relation .nodes circle {
+    pointer-events: all;
+}
+
+svg.scatter-chart {
+    width: 100%;
+    max-width: 650px;
 }
