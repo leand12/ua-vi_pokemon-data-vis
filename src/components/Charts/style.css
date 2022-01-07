@@ -27,6 +27,10 @@ svg.type-relation .nodes circle {
     pointer-events: all;
 }
 
+svg.type-relation .nodes-text {
+    pointer-events: all;
+}
+
 svg.scatter-chart {
     width: 100%;
     max-width: 650px;
