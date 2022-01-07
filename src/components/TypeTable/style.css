@@ -1,0 +1,12 @@
+
+th {
+    min-width: 30px;
+    line-height: 30px;
+    border-radius: 3px;
+    color: #dbdbdb;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.values th {
+    color: #ffdd57;
+}

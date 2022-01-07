@@ -2,6 +2,9 @@ import React from 'react';
 import { Button, Grid, Card } from '@mui/material';
 import useCompareStore from 'stores/useCompareStore';
 import "./style.css";
+import StatsTable from "../StatsTable";
+import TypeTable from "../TypeTable";
+
 
 export default function InfoCard(props) {
 
@@ -10,13 +13,13 @@ export default function InfoCard(props) {
     //const pokemon = {"attack": 47, "defense": 52, "hp": 55, "name": "Nidoran♂", "pokedex_number": 29, "sp_attack": 40, "sp_defense": 40, "speed": 41, "type1": "poison", "type2": "", "generation": 1, "is_legendary": 0}
 
     const getImage = (name) => {
-        name = name.replace(" ", "-");
-        name = name.replace(".", "");
-        name = name.replace(":", "");
-        name = name.replace("♀", "-f");
-        name = name.replace("♂", "-m");
-        name = name.replace("é", "e");
-        name = name.replace("'", "");
+        name = name.replaceAll(" ", "-");
+        name = name.replaceAll(".", "");
+        name = name.replaceAll(":", "");
+        name = name.replaceAll("♀", "-f");
+        name = name.replaceAll("♂", "-m");
+        name = name.replaceAll("é", "e");
+        name = name.replaceAll("'", "");
         name = name.toLowerCase();
         return "https://img.pokemondb.net/artwork/" + name + ".jpg";
     }
@@ -48,29 +51,10 @@ export default function InfoCard(props) {
                         <h2 style={{ color: getCardColor(), fontWeight: 600 }}>{pokemon.name} #{pokemon.pokedex_number}</h2>
                         <img src={getImage(pokemon.name)} style={{ width: "200px", height: "200px" }}></img>
                     </Grid>
-                    <Grid item xs={12} sm={7} md={12} lg={7}>
-                        <Grid container alignContent="center" alignItems="center" className="stats">
-                            <Grid item xs={6} md={6}>
-                                <span>ATK: {pokemon.attack}</span>
-                            </Grid>
-                            <Grid item xs={6} md={6}>
-                                <span>DEF: {pokemon.defense}</span>
-                            </Grid>
-                            <Grid item xs={6} md={6}>
-                                <span>S.ATK: {pokemon.sp_attack}</span>
-                            </Grid>
-                            <Grid item xs={6} md={6}>
-                                <span>S.DEF: {pokemon.sp_defense}</span>
-                            </Grid>
-                            <Grid item xs={6} md={6}>
-                                <span>HP: {pokemon.hp}</span>
-                            </Grid>
-                            <Grid item xs={6} md={6}>
-                                <span>SPD: {pokemon.speed}</span>
-                            </Grid>
-                        </Grid>
-                    </Grid>
+                    <StatsTable data={pokemon} />
                 </Grid>
+
+                <TypeTable types={[pokemon.type1, pokemon.type2]} />
 
                 {props.comparable ?
                     <div style={{ margin: "8px auto" }}>
