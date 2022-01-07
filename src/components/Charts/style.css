@@ -7,6 +7,8 @@
 
 .charts h1 {
     margin: 1em;
+    font-size: 2.5em;
+    text-shadow: 1px 0.5px 0px #fff, 2.5px 1px 0px #aaa;
 }
 
 .charts .container-area {
@@ -26,6 +28,11 @@ svg.type-relation .nodes circle {
 }
 
 svg.scatter-chart {
+    width: 100%;
+    max-width: 650px;
+}
+
+svg.radar-chart {
     width: 100%;
     max-width: 650px;
 }

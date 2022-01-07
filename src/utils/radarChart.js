@@ -40,8 +40,8 @@ let RadarChart = {
             radians: 2 * Math.PI,
             opacityArea: 0.5,
             ToRight: 5,
-            TranslateX: 80,
-            TranslateY: 30,
+            TranslateX: 40,
+            TranslateY: 60,
             ExtraWidthX: 100,
             ExtraWidthY: 100,
             color: ["rgb(204, 51, 63)", "rgb(237, 201, 81)"],
@@ -63,8 +63,8 @@ let RadarChart = {
         d3.select(id).selectAll("*").remove();
 
         let g = d3.select(id)
-            .attr("width", cfg.w + cfg.ExtraWidthX)
-            .attr("height", cfg.h + cfg.ExtraWidthY)
+            // .attr("width", cfg.w + cfg.ExtraWidthX)
+            // .attr("height", cfg.h + cfg.ExtraWidthY)
             .append("g")
             .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
 

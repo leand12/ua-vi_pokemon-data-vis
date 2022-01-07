@@ -35,12 +35,10 @@ export default function ChartScatter() {
         <div>
             <h1>Status Relation</h1>
             <Grid container className="container-area">
-                <Grid item md={12} lg={7}>
-                    <Grid alignItems="center" style={{textAlign: "center"}}>
-                        <svg viewBox='0 0 300 300' className="scatter-chart"></svg>
-                    </Grid>
+                <Grid item md={12} lg={7} style={{ width: "100%", textAlign: "center"}}>
+                        <svg className="scatter-chart" viewBox='0 0 300 300'></svg>
                 </Grid>
-                <Grid item md={12} lg={5}>
+                <Grid item md={12} lg={5} style={{ width: "100%" }}>
                     <Grid container justifyContent="center">
                         <Grid container direction="row" justifyContent="space-evenly">
                             <FormControl style={{ position: 'relative', margin: '1.5em 0' }}>

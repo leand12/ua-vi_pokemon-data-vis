@@ -1,11 +1,35 @@
 .card-info {
-    margin: 0 auto 16px auto;
-    max-width: 750px; 
+    margin: 8px;
+    margin-top: 0;
+    width: 100%;
+    max-width: 650px;
+    text-align: center;
+}
+
+.card-info:first-child {
+    margin-top: 8px;
+}
+
+.card-info h2 {
+    font-size: 1.8em;
+    text-shadow: -0.5px -0.5px 0px #aaa,
+        1px 1px 0px #aaa,
+        1.5px 1.5px 0px #aaa;
+}
+
+.card-info .stats {
+    width: 100%;
+    font-size: 1.3em;
+    height: 100%;
+    padding: 0 8px;
+}
+
+.card-info span {
+    line-height: 2em;
 }
 
 @media only screen and (min-width: 1200px) {
     .card-info {
-        margin: 8px;
-        max-width: 450px;
+        max-width: 550px;
     }
 }

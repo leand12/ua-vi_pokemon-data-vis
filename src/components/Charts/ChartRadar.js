@@ -14,17 +14,22 @@ export default function ChartRadar() {
     }, [compare1, compare2]);
 
     return (
-        <div style={{marginBottom: 8}}>
+        <div style={{ marginBottom: 8 }}>
             <h1>Pokemon Comparison</h1>
             <Grid container className="container-area">
-                <Grid container justifyContent="center" alignItems="center">
-                    <svg className="radar-chart"></svg>
+                <Grid item md={12} lg={7} style={{ width: "100%", textAlign: "center" }}>
+                    <svg className="radar-chart" viewBox='0 0 700 700'></svg>
                 </Grid>
-                <Grid container direction="row" justifyContent="space-evenly">
-                    <InfoCard comparable={false} type={"compare1"} />
-                    <InfoCard comparable={false} type={"compare2"} />
+                <Grid item md={12} lg={5} style={{ width: "100%" }}>
+                    <Grid container direction="row" justifyContent="space-evenly">
+                        <Grid item sm={12} md={6} lg={12} style={{display: "flex", justifyContent: "center"}}>
+                            <InfoCard comparable={false} type={"compare1"} />
+                        </Grid>
+                        <Grid item sm={12} md={6} lg={12} style={{display: "flex", justifyContent: "center"}}>
+                            <InfoCard comparable={false} type={"compare2"} />
+                        </Grid>
+                    </Grid>
                 </Grid>
-
             </Grid>
         </div>
     );
