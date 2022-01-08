@@ -1,12 +1,12 @@
 import Charts from 'components/Charts';
-import SideFilter from 'components/SideFilter';
+import SideBar from 'components/SideBar';
 import './App.css';
 
 function App() {
 
   return (
     <div className="App">
-      <SideFilter />
+      <SideBar />
       <Charts />
     </div>
   );
