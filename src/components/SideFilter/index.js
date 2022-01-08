@@ -5,6 +5,8 @@ import TypeSwitch from './TypeSwitch';
 import GenSelect from './GenSelect';
 import FormControl from '@mui/material/FormControl';
 import './style.css';
+import TeamBuilder from 'components/TeamBuilder';
+
 
 export default function SideFilter() {
     const [hide, setHide] = React.useState(false);
@@ -21,6 +23,7 @@ export default function SideFilter() {
                     <TypeSelect />
                     <TypeSwitch />
                     <GenSelect />
+                    <TeamBuilder />
                 </FormControl>
             </div>
             <div className="controls-toggle">

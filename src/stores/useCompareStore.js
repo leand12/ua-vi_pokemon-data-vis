@@ -1,12 +1,14 @@
 import create from "zustand";
 import { combine } from "zustand/middleware";
+import data from 'archive/pokemon.json'
 
 const useCompareStore = create(
     combine(
         {
             compare1 : {},
             compare2 : {},
-            selected : {}
+            selected : {},
+            team     : [data.pokemons[1]]
         },
         (set, get) => ({
             setSelected: (newSelected) => {
@@ -24,6 +26,27 @@ const useCompareStore = create(
                     return { compare2: newCompare2 };
                 })
             },
+            setTeam: (pokemon) => {
+                return set(() => {
+                    const team = [...get().team];
+                    if(team.length < 6) 
+                        team.push(pokemon);
+                    return {team}
+                })
+            },
+            removeTeam: (pokemon) => {
+                
+                return set(() => {
+                    const team = [...get().team];
+                    for(let i=0; i < team.length; i++) {
+                        if(team[i].pokedex_number == pokemon) {
+                            team.splice(i,1);
+                            break;
+                        }
+                    }
+                    return {team}
+                })
+            }
         })
     )
 );

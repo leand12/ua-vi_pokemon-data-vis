@@ -31,6 +31,10 @@ export default function InfoCard(props) {
             useCompareStore.getState().setCompare2(pokemon);
     }
 
+    const addToTeam = (pokemon) => {
+        useCompareStore.getState().setTeam(pokemon);
+    }
+
     const getCardColor = (opacity = 1) => {
         if (props.type === 'compare1') {
             return "rgba(204, 51, 63, " + opacity + ")";
@@ -55,7 +59,8 @@ export default function InfoCard(props) {
                 </Grid>
 
                 <TypeTable types={[pokemon.type1, pokemon.type2]} />
-
+                <Button style={{ margin: 8, backgroundColor: "green" }} variant="contained"
+                            onClick={() => { addToTeam(pokemon) }}> Add to Team</Button>
                 {props.comparable ?
                     <div style={{ margin: "8px auto" }}>
                         <Button style={{ margin: 8, backgroundColor: "rgb(204, 51, 63)" }} variant="contained"
