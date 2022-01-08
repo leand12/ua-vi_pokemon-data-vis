@@ -2,7 +2,7 @@ import React from 'react';
 
 import Filters from "./Filters";
 import './style.css';
-import TeamBuilder from './TeamBuilder';
+import TeamBuilderBar from './TeamBuilderBar';
 
 const TAB = {
     FILTERS: 0,
@@ -26,7 +26,7 @@ export default function SideBar() {
                     {
                         tab === TAB.FILTERS ?
                             <Filters /> :
-                            <TeamBuilder />
+                            <TeamBuilderBar />
                     }
                 </div>
             </div>
