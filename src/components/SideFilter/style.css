@@ -1,13 +1,13 @@
 .controls {
     transition: all 0.8s;
     flex-basis: 300px;
-    flex-shrink: 0.6;
+    flex-shrink: 0.8;
     padding: 8px !important;
-    overflow: auto;
-    background-color: #f5f5f5;
     margin: 0 !important;
+    background-color: #f5f5f5;
+    height: 100vh;
+    overflow: hidden auto;
     align-self: flex-start;
-    min-height: 100vh;
     position: sticky;
     position: -webkit-sticky;
     top: 0;
@@ -19,20 +19,35 @@
 }
 
 .controls-toggle {
-    position: relative;
-    top: 20px;
     font-size: 1.8em;
-    left: calc(-1.8em - 4px);
+    align-self: flex-start;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
 }
 
-.vertical-text {
-    transform: rotate(-90deg);
-    transform-origin: right, top;
-    -ms-transform: rotate(-90deg);
-    -ms-transform-origin: right, top;
-    -webkit-transform: rotate(-90deg);
-    -webkit-transform-origin: right, top;
+.controls-toggle-inner {
+    background-color: #eee;
+    border-radius:  0 0 0 10px;
+    cursor: pointer;
+    display: inline-flex;
     position: absolute;
-    border: 1px solid black;
-    border-radius: 5px 0 0 0;
+    top: 97px;
+    left: -97px;
 }
+
+.controls-toggle-inner span {
+    background-color: rgba(0, 0, 0, 0.26);
+    border: 1px solid #dedede;
+    white-space: nowrap;
+    padding: 0 8px;
+}
+
+.controls-toggle-inner span:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.controls-toggle-inner span:first-child {
+    border-radius:  0 0 0 10px;
+}
+
