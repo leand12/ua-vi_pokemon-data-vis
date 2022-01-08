@@ -28,7 +28,11 @@ svg.type-relation .nodes circle {
 }
 
 svg.type-relation .nodes-text {
-    pointer-events: all;
+    pointer-events: none;
+}
+
+svg.type-relation .nodes-half {
+    pointer-events: none;
 }
 
 svg.scatter-chart {

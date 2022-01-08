@@ -302,11 +302,6 @@ export function initializeDisplay() {
     nodeHalf = nodeHalfData.enter().append("path")
         .attr("fill", (d) => colours[d.id.split(" ")[1]])
         .attr("mask", "url(#fade)")
-        .on("click", filterType)
-        .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended))
         .merge(nodeHalfData)
         .attr("d", (d) => { const r = nodeRadius(d); return `M 0 ${r} a 1 1 0 0 0 ${2 * r} 0` });
 
