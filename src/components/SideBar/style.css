@@ -1,5 +1,5 @@
 .controls {
-    transition: all 0.8s;
+    transition: all 0.5s;
     flex-basis: 300px;
     flex-shrink: 0.8;
     padding: 8px !important;
