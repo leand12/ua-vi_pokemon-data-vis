@@ -8,7 +8,7 @@ import './style.css';
 import useFilterStore from 'stores/useFilterStore';
 
 export default function Filters() {
-    const [search, setSearch] = useState('d');
+    const [search, setSearch] = useState('');
     const [pokemons, setPokemons] = useState([]);
     const [shownPokemons, setShownPokemons] = useState([]);
     const allPokemons = useFilterStore(state => state.pokemons);
@@ -42,7 +42,6 @@ export default function Filters() {
                 {
                     shownPokemons.map((pk, i) => <SmInfoCard key={i} pokemon={pk} />)
                 }
-                {console.log(pokemons.length, shownPokemons.length)}
                 {
                     shownPokemons.length < pokemons.length ?
                         <Button className="btn-load" variant="text" onClick={handleLoadMore}>Load More</Button> : null

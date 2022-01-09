@@ -8,16 +8,18 @@ const filterPokemons = (filters) => {
 
     for (const p of data.pokemons) {
         let add = true, addTR = true;
+        let { type1, type2, generation } = p;
+        type2 = type2 ? type2 : type1;
 
         if (filters.typesSelection === 'any') {
-            if (![p.type1, p.type2].some(t => filters.types.includes(t)))
+            if (![type1, type2].some(t => filters.types.includes(t)))
                 add = false;
         } else if (filters.typesSelection === 'all') {
-            if (![p.type1, p.type2].every(t => filters.types.includes(t)))
+            if (![type1, type2].every(t => filters.types.includes(t)))
                 add = false;
         }
 
-        if (!filters.generations.includes(p.generation)) {
+        if (!filters.generations.includes(generation)) {
             add = addTR = false;
         }
 
