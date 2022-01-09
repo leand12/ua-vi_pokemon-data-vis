@@ -4,6 +4,10 @@
     border-radius: 8px;
 }
 
+.exterior svg {
+    font-size: 1.3em;
+}
+
 .exterior img:nth-child(2) {
     margin-top: -5px;
 }

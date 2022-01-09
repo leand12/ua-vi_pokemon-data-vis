@@ -1,5 +1,5 @@
-.App {
-  width: 100%;
+.team-planner {
+  width: 100vw;
   margin: 0;
   padding: 0;
   display: flex;
@@ -7,3 +7,16 @@
   font-family: sans-serif;
   font-size: 75%;
 }
+
+.page-tab {
+  position: relative;
+  left: 0;
+  display: inline-flex;
+  transition: all 1s;
+  height: 100vh;
+}
+
+.page-tab.active {
+  left: -100vw;
+}
+
