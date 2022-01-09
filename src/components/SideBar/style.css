@@ -24,28 +24,33 @@
     position: sticky;
     position: -webkit-sticky;
     top: 0;
-    width: 26px;
+    width: 2em;
 }
 
 .controls-toggle-inner {
-    background-color: #eee;
+    background-color: #ccc;
     border-radius:  0 0 0 10px;
     cursor: pointer;
     display: inline-flex;
     position: absolute;
-    top: 97px;
-    left: -97px;
+    top: 4.9em;
+    left: -4.9em;
 }
 
 .controls-toggle-inner span {
-    background-color: rgba(0, 0, 0, 0.26);
-    border: 1px solid #dedede;
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+    border-left: 1px solid rgba(0, 0, 0, 0.18);
     white-space: nowrap;
     padding: 0 8px;
 }
 
-.controls-toggle-inner span:hover {
-    background-color: rgba(0, 0, 0, 0.4);
+.controls-toggle-inner span.active {
+    background-color: #f5f5f5;
+}
+
+.controls-toggle-inner span:not(.active):hover {
+    background-color: rgba(0, 0, 0, 0.18);
 }
 
 .controls-toggle-inner span:first-child {

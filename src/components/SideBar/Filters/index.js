@@ -11,6 +11,7 @@ export default function SideBar() {
                 <TypeSelect />
                 <TypeSwitch />
                 <GenSelect />
+                
             </FormControl>
         </>
     );

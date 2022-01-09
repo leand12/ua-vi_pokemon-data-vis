@@ -32,8 +32,10 @@ export default function SideBar() {
             </div>
             <div className="controls-toggle">
                 <div className='controls-toggle-inner noselect vertical-text'>
-                    <span onClick={() => toggleBar(TAB.FILTERS)}>Filters</span>
-                    <span onClick={() => toggleBar(TAB.TEAM_BUILDER)}>Team Builder</span>
+                    <span className={tab === TAB.FILTERS ? 'active' : ''} 
+                        onClick={() => toggleBar(TAB.FILTERS)}>Filters</span>
+                    <span className={tab === TAB.TEAM_BUILDER ? 'active' : ''} 
+                        onClick={() => toggleBar(TAB.TEAM_BUILDER)}>Team Builder</span>
                 </div>
             </div>
         </>

@@ -11,7 +11,7 @@ import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 // https://medium.com/codex/an-interactive-scatter-plot-e5a01064b17
 export default function ChartScatter() {
 
-    const pokemons = useFilterStore(state => state.pokemonsTR);
+    const pokemons = useFilterStore(state => state.pokemons);
 
     const [xAxis, setXAxis] = React.useState("attack");
     const [yAxis, setYAxis] = React.useState("defense");
