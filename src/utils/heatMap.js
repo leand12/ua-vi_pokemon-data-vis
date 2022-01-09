@@ -84,7 +84,6 @@ export function getStatsCorrelationData(pokemons) {
     for(let i=0; i < std.length; i++)
         std[i] = Math.sqrt(std[i]/pokemons.length)
 
-    console.log(std)
     for(let i=0; i < atributes.length; i++) {
         for(let j=i; j < atributes.length; j++) {
             cov[i][j] = cov[i][j] / (pokemons.length*std[i]*std[j]) ;
@@ -92,7 +91,6 @@ export function getStatsCorrelationData(pokemons) {
         }
     }
 
-    console.log(cov)
     return [cov, atributes, atributes]
 }
 
