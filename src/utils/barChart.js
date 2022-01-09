@@ -26,6 +26,7 @@ export function loadBarChartGenerations(pokemons) {
                     .append("div")
                     .style("opacity", 0)
                     .attr("class", "tooltip")
+                    .style("margin-left", "100vw")
                     .style("background-color", "white")
                     .style("border", "solid")
                     .style("border-width", "2px")

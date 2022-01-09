@@ -108,6 +108,7 @@ export function loadTypeHeatmap(data, xLabel, yLabel, id){
                     .append("div")
                     .style("opacity", 0)
                     .attr("class", "tooltip")
+                    .style("margin-left", "100vw")
                     .style("background-color", "white")
                     .style("border", "solid")
                     .style("border-width", "2px")
@@ -128,7 +129,7 @@ export function loadTypeHeatmap(data, xLabel, yLabel, id){
     let mousemove = function (event, d) {
         tooltip
             .html(d)
-            .style("left", (event.pageX - 100 - margin) + "px")
+            .style("left", (event.pageX + 100 - margin) + "px")
             .style("top", (event.pageY) + "px")
     }
     let mouseleave = function (d) {
