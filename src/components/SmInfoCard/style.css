@@ -1,7 +1,11 @@
-img {
+.exterior img, .type-icons {
     width: 30px;
     height: 30px;
     border-radius: 8px;
+}
+
+.exterior img:nth-child(2) {
+    margin-top: -5px;
 }
 
 .exterior {
@@ -10,7 +14,7 @@ img {
     border-radius: 8px;
     margin-bottom: 5px;
     font-size: 1.4em;
-    height: 2.5em;
+    height: 3.5em;
 }
 
 .action_button {

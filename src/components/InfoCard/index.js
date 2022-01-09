@@ -54,7 +54,7 @@ export default function InfoCard(props) {
                 <Grid container>
                     <Grid style={{display: "inline-flex"}} item xs={12} sm={12} md={12} lg={12}>
                         <h2 style={{ color: getCardColor(), fontWeight: 600, textAlign: "left", paddingLeft: "20px" }}>{pokemon.name} #{pokemon.pokedex_number}</h2>
-                        <img style={{marginTop: "17px"}} src={type_images[pokemon.type1]}></img> {pokemon.type2 ? <img style={{marginTop: "17px"}} src={type_images[pokemon.type2]}></img> : <></>}
+                        <img className="type-icons" style={{marginTop: "17px"}} src={type_images[pokemon.type1]}></img> {pokemon.type2 ? <img className="type-icons" style={{marginTop: "17px"}} src={type_images[pokemon.type2]}></img> : <></>}
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={6}>
                         <img src={getImage(pokemon.name)} style={{ width: "200px", height: "200px" }}></img>

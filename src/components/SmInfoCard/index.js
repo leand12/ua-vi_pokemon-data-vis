@@ -52,21 +52,23 @@ export default function SmInfoCard({ pokemon, highlighted, onTeam }) {
         <Grid container direction="row" className="exterior" alignItems="center" style={{ borderColor: highlighted ? "gold" : "gray" }}
             onMouseEnter={mouseOverHandler} onMouseLeave={mouseOutHandler}>
 
-            <Grid item md={2}>
+            <Grid item md={2} style={{ textAlign: "center" }}>
                 <img src={getImage(pokemon.name)}></img>
             </Grid>
             <Grid item md={10}>
                 <Grid container alignItems="center">
                     {!selected ?
                         <>
-                            <Grid item md={8} style={{textAlign: "left"}}>
-                                {pokemon.name} #{pokemon.pokedex_number}
+                            <Grid item md={9} style={{ textAlign: "left", paddingLeft: 8 }}>
+                                {pokemon.name} <br></br>#{pokemon.pokedex_number}
                             </Grid>
-                            <Grid item md={4}>
-                                <img src={type_images[pokemon.type1]}></img>
-                                {
-                                    pokemon.type2 ? <img src={type_images[pokemon.type2]}></img> : <></>
-                                }
+                            <Grid item md={3}>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <img src={type_images[pokemon.type1]}></img>
+                                    {
+                                        pokemon.type2 ? <img src={type_images[pokemon.type2]}></img> : <></>
+                                    }
+                                </div>
                             </Grid>
                         </> : <div style={{ marginLeft: "auto" }}>
                             <IconButton aria-label="add to compare one" sx={{ color: "rgb(204, 51, 63)" }}

@@ -84,7 +84,7 @@ export default function TeamBuilder() {
 
             {Object.keys(coverage).map((t, i) => {
                 return (
-                    <img onMouseOver={() => typeOver(coverage[t])} onMouseLeave={() => clearOvers()} key={t + "_" + i} src={type_images[t]} style={{border: "1px solid", borderColor: coverage[t].length ? "gold" : "transparent", opacity: coverage[t].length ? 1 : 0.3 }}></img>
+                    <img className='type-icons' onMouseOver={() => typeOver(coverage[t])} onMouseLeave={() => clearOvers()} key={t + "_" + i} src={type_images[t]} style={{border: "1px solid", borderColor: coverage[t].length ? "gold" : "transparent", opacity: coverage[t].length ? 1 : 0.3 }}></img>
                 )
             })}        
         </div>
