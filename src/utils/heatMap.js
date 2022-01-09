@@ -94,7 +94,7 @@ export function getStatsCorrelationData(pokemons) {
     return [cov, atributes, atributes]
 }
 
-export function loadTypeHeatmap(data, xLabel, yLabel){
+export function loadTypeHeatmap(data, xLabel, yLabel, id){
 
 
     /*
@@ -104,7 +104,7 @@ export function loadTypeHeatmap(data, xLabel, yLabel){
    let margin = 80;
     // Tooltip
 
-    let tooltip = d3.select("#heatmap-div")
+    let tooltip = d3.select('#' + id)
                     .append("div")
                     .style("opacity", 0)
                     .attr("class", "tooltip")
@@ -155,7 +155,7 @@ export function loadTypeHeatmap(data, xLabel, yLabel){
     let cell_size = 50;
 
 
-    let svg = d3.select(".charts-heatmap");
+    let svg = d3.select('#' + id + " .charts-heatmap");
     let height = yLabel.length*cell_size
     let width = xLabel.length*cell_size
 

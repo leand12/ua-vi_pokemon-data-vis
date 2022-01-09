@@ -13,7 +13,7 @@ export default function Charts({ changePage }) {
 
     return (
         <div className="charts">
-            <Button sx={{ m: 4, width: 200, marginLeft: "auto" }} variant="outlined" endIcon={<ArrowForwardIcon />} onClick={changePage}>
+            <Button sx={{ m: 4, mb: 0, width: 200, marginLeft: "auto" }} variant="outlined" endIcon={<ArrowForwardIcon />} onClick={changePage}>
                 Statistics
             </Button>
             <ChartTypeRelation />

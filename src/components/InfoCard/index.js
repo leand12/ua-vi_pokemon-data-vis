@@ -64,11 +64,11 @@ export default function InfoCard(props) {
                         <StatsTable data={pokemon} />
                     </Grid>
                 </Grid>
-                <Grid style={{padding: "20px"}} item xs={12} sm={12} md={6} lg={6}>
+                <Grid style={{padding: "20px"}} container>
                     <h2>Type Weaknesses</h2>
                     <TypeTable types={[pokemon.type1, pokemon.type2]} />
                 </Grid>
-                <Grid style={{padding: "20px"}} item xs={12} sm={12} md={12} lg={12}>
+                <Grid style={{padding: "20px"}} container>
                     <Button style={{ margin: 8, backgroundColor: "green" }} variant="contained"
                                 onClick={() => { addToTeam(pokemon) }}> Add to Team</Button>
                     {props.comparable ?

@@ -19,6 +19,7 @@ export default function Charts({ changePage }) {
             <ChartLine />
             <ChartBar />
             <ChartHeatmap />
+            <ChartHeatmap stats />
         </div>
     )
 }
