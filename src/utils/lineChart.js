@@ -26,8 +26,8 @@ export function loadLineChart(data){
 
     let width = 500;
     let height = 500;
-    let margin = 30;
-    let svg = d3.select(".charts-line").attr("width", width + margin).attr("height", height + margin);
+    let margin = 45;
+    let svg = d3.select(".charts-line").attr("width", width + margin).attr("height", height + margin*2).attr("transform", "translate("+margin+","+margin+")");
 
     let color = d3.scaleOrdinal()
         .domain(attributes)
@@ -72,15 +72,19 @@ export function loadLineChart(data){
         .enter().append("g")
         .attr("class","lineLegend")
         .attr("transform", function (d,i) {
-                return "translate(" + (margin + 10) + "," + (i*20)+")";
+                return "translate(" + (margin + 10) + "," + (i*20 + 5)+")";
             });
     
     lineLegend.append("text").text(function (d) {return d[0].toUpperCase() + d.slice(1).replace("_", " ");})
-        .attr("transform", "translate(15,9)"); //align texts with boxes
+        .attr("transform", "translate(15,10)"); //align texts with boxes
     
     lineLegend.append("rect")
         .attr("fill", function (d, i) {return color(d); })
         .attr("width", 10).attr("height", 10);
+
+
+    svg.append("text").attr("x", width/2 ).attr("y", height + margin).text("Generation")
+    svg.append("text").attr("transform", "translate("+ (margin/2 - 10)+","+(margin + height/2)   +")rotate(270)").text("Stats Value")
     
 
 }
