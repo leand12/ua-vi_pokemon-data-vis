@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
-import * as d3 from "d3";
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 
 import useFilterStore from 'stores/useFilterStore';
 import {
@@ -29,6 +30,10 @@ export default function ChartTypeRelation() {
     return (
         <div>
             <h1>Type Relation</h1>
+            {/* <div className="btn-zoom" style={{top: "calc(2.5em + 10px)", right: "calc(10px + 8px)"}}>
+                <ZoomInIcon />
+                <ZoomOutIcon />
+            </div> */}
             <svg className="type-relation container-area" viewBox='0 0 900 900'>
                 <defs>
                     <linearGradient id="fadeGrad" y2="1" x2="0">

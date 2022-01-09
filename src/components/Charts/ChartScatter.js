@@ -1,10 +1,12 @@
 import React from 'react';
 import { FormControl, MenuItem, InputLabel, Select } from '@mui/material';
-import { loadScatterPlot, initScatterPlot, changeColors } from 'utils/scatterPlot';
+import { loadScatterPlot, initScatterPlot, changeColors, zoomBy } from 'utils/scatterPlot';
 import useFilterStore from 'stores/useFilterStore';
 import InfoCard from 'components/InfoCard';
 import useCompareStore from 'stores/useCompareStore';
 import Grid from '@mui/material/Grid';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 
 // https://medium.com/codex/an-interactive-scatter-plot-e5a01064b17
 export default function ChartScatter() {
@@ -35,8 +37,12 @@ export default function ChartScatter() {
         <div>
             <h1>Status Relation</h1>
             <Grid container className="container-area">
-                <Grid item md={12} lg={7} style={{ width: "100%", textAlign: "center"}}>
-                        <svg className="scatter-chart" viewBox='0 0 300 300'></svg>
+                <Grid item md={12} lg={7} style={{ width: "100%", textAlign: "center" }}>
+                    {/* <div className="btn-zoom" style={{top: "calc(2.5em + 40px)", right: "calc(10px + 30px)"}}>
+                        <ZoomInIcon onClick={() => zoomBy(2)} />
+                        <ZoomOutIcon onClick={() => zoomBy(0.5)} />
+                    </div> */}
+                    <svg className="scatter-chart" viewBox='0 0 300 300'></svg>
                 </Grid>
                 <Grid item md={12} lg={5} style={{ width: "100%" }}>
                     <Grid container justifyContent="center">

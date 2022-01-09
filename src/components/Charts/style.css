@@ -19,6 +19,20 @@
     border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
+/* .btn-zoom {
+    position: relative;
+    float: right;
+}
+
+.btn-zoom svg {
+    font-size: 2.5em;
+}
+
+.btn-zoom svg:hover {
+    background-color: rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+} */
+
 svg.type-relation {
     max-height: 80vh;
 }

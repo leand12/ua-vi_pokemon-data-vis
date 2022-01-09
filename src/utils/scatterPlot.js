@@ -1,12 +1,13 @@
 import useCompareStore from "stores/useCompareStore";
 import * as d3 from "d3";
 
-const margin = 30;
-const scalingX = 1;
-const scalingY = 1;
+const marginX = 30,
+   marginY = marginX / 2,
+   scalingX = 1,
+   scalingY = 1;
 
 const width = 300, height = 300;
-let svg, scatter, xAxis, yAxis, yScale, xScale, xType, yType;
+let svg, scatter, zoom, xAxis, yAxis, yScale, xScale, xType, yType;
 
 export function initScatterPlot() {
    svg = d3.select("svg.scatter-chart");
@@ -17,9 +18,7 @@ export function initScatterPlot() {
       .attr("id", "clip")
       .append("svg:rect")
       .attr("width", 255)
-      .attr("height", 255)
-      .attr("x", margin)
-      .attr("y", margin / 2);
+      .attr("height", 255);
 
    yScale = d3.scaleLinear()
       .domain([0, 255 * scalingY])
@@ -30,24 +29,28 @@ export function initScatterPlot() {
       .range([0, 255 * scalingX]);
 
    yAxis = svg.append("g").attr("id", "yAxis")
-      .attr("transform", "translate(" + margin + "," + margin / 2 + ")")
+      .attr("transform", "translate(" + marginX + "," + marginY + ")")
       .call(d3.axisLeft(yScale));
 
    xAxis = svg.append("g").attr("id", "xAxis")
-      .attr("transform", "translate(" + margin + "," + (255 * scalingY + margin / 2) + ")")
+      .attr("transform", "translate(" + marginX + "," + (255 * scalingY + marginY) + ")")
       .call(d3.axisBottom(xScale));
 
-   var zoom = d3.zoom()
-      .scaleExtent([1, 5])
+   zoom = d3.zoom()
+      .scaleExtent([1, 6])
       .extent([[0, 0], [255, 255]])
+      .translateExtent([[0, 0], [255, 255]])
       .on("zoom", updateChart);
 
    svg.append("rect")
+      .attr("class", "zoom")
       .attr("width", width)
       .attr("height", height)
       .style("fill", "none")
       .style("pointer-events", "all")
       .call(zoom);
+      // .on("wheel.zoom", null)
+      // .on("dblclick.zoom", null);
 }
 
 function updateChart(event) {
@@ -61,12 +64,7 @@ function updateChart(event) {
    yAxis.call(d3.axisLeft(newY))
 
    // update circle position
-   scatter.attr("transform", event.transform)
-
-   // .selectAll("circle")
-   // .attr('cx', function (d) { return newX(d[xType] * scalingX + margin) })
-   // .attr('cy', function (d) { return newY(d[yType] * scalingY + margin / 2) })
-   // .attr("r", 0.5 * event.transform.k + 1.5);
+   scatter.attr("transform", event.transform);
 }
 
 export function loadScatterPlot(data, ax1, ax2) {
@@ -75,17 +73,18 @@ export function loadScatterPlot(data, ax1, ax2) {
    svg.select("g.points").remove();
 
    scatter = svg.append("g")
+      .attr("transform", `translate(${marginX}, ${marginY})`)
       .attr("clip-path", "url(#clip)")
       .attr("class", "points")
-      .append("g");
+      .append("g")
 
    scatter
-      .selectAll("circle")
+      .selectAll(null)
       .data(data)
       .join("circle")
       .attr("r", 1.2)
-      .attr("cx", d => (d[ax1] * scalingX + margin))
-      .attr("cy", d => ((255 - d[ax2]) * scalingY + margin / 2))
+      .attr("cx", d => (d[ax1] * scalingX))
+      .attr("cy", d => ((255 - d[ax2]) * scalingY))
       .attr("fill", "rgb(0, 160, 176)")
       .attr("fill-opacity", 0.6)
       .on("click", function (e, d) {
@@ -102,7 +101,7 @@ export function loadScatterPlot(data, ax1, ax2) {
          } else {
             d3.select(this).style("fill-opacity", 0.6);
          }
-      });
+      })
 }
 
 export function changeColors(state) {
