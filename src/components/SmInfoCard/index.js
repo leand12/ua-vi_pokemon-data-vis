@@ -14,8 +14,16 @@ export default function SmInfoCard({ pokemon, highlighted, onTeam }) {
     const [selected, setSelected] = React.useState(false);
 
     const getImage = (name) => {
-        return "https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png";
-    }
+        name = name.replaceAll(" ", "-");
+        name = name.replaceAll(".", "");
+        name = name.replaceAll(":", "");
+        name = name.replaceAll("♀", "-f");
+        name = name.replaceAll("♂", "-m");
+        name = name.replaceAll("é", "e");
+        name = name.replaceAll("'", "");
+        name = name.toLowerCase();
+        return "https://img.pokemondb.net/artwork/" + name + ".jpg";
+    };
 
     const mouseOverHandler = () => {
         setSelected(!selected);

@@ -4,6 +4,7 @@ import useCompareStore from 'stores/useCompareStore';
 import "./style.css";
 import StatsTable from "../StatsTable";
 import TypeTable from "../TypeTable";
+import { type_images } from 'utils/globals';
 
 
 export default function InfoCard(props) {
@@ -51,24 +52,34 @@ export default function InfoCard(props) {
                 style={{ borderColor: getCardColor() }}>
 
                 <Grid container>
-                    <Grid item xs={12} sm={5} md={12} lg={5}>
-                        <h2 style={{ color: getCardColor(), fontWeight: 600 }}>{pokemon.name} #{pokemon.pokedex_number}</h2>
+                    <Grid style={{display: "inline-flex"}} item xs={12} sm={12} md={12} lg={12}>
+                        <h2 style={{ color: getCardColor(), fontWeight: 600, textAlign: "left", paddingLeft: "20px" }}>{pokemon.name} #{pokemon.pokedex_number}</h2>
+                        <img style={{marginTop: "17px"}} src={type_images[pokemon.type1]}></img> {pokemon.type2 ? <img style={{marginTop: "17px"}} src={type_images[pokemon.type2]}></img> : <></>}
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={6}>
                         <img src={getImage(pokemon.name)} style={{ width: "200px", height: "200px" }}></img>
                     </Grid>
-                    <StatsTable data={pokemon} />
+                    <Grid item xs={12} sm={12} md={6} lg={6}>
+                        <h2>Pokemon Stats</h2>
+                        <StatsTable data={pokemon} />
+                    </Grid>
                 </Grid>
-
-                <TypeTable types={[pokemon.type1, pokemon.type2]} />
-                <Button style={{ margin: 8, backgroundColor: "green" }} variant="contained"
-                            onClick={() => { addToTeam(pokemon) }}> Add to Team</Button>
-                {props.comparable ?
-                    <div style={{ margin: "8px auto" }}>
-                        <Button style={{ margin: 8, backgroundColor: "rgb(204, 51, 63)" }} variant="contained"
-                            onClick={() => { addToCompare(1) }}> Select for Compare 1</Button>
-                        <Button style={{ margin: 8, backgroundColor: "rgb(237, 201, 81)" }} variant="contained"
-                            onClick={() => { addToCompare(2) }}> Select for Compare 2</Button>
-                    </div> : <></>
-                }
+                <Grid style={{padding: "20px"}} item xs={12} sm={12} md={6} lg={6}>
+                    <h2>Type Weaknesses</h2>
+                    <TypeTable types={[pokemon.type1, pokemon.type2]} />
+                </Grid>
+                <Grid style={{padding: "20px"}} item xs={12} sm={12} md={12} lg={12}>
+                    <Button style={{ margin: 8, backgroundColor: "green" }} variant="contained"
+                                onClick={() => { addToTeam(pokemon) }}> Add to Team</Button>
+                    {props.comparable ?
+                        <div style={{ margin: "8px auto" }}>
+                            <Button style={{ margin: 8, backgroundColor: "rgb(204, 51, 63)" }} variant="contained"
+                                onClick={() => { addToCompare(1) }}> Select for Compare 1</Button>
+                            <Button style={{ margin: 8, backgroundColor: "rgb(237, 201, 81)" }} variant="contained"
+                                onClick={() => { addToCompare(2) }}> Select for Compare 2</Button>
+                        </div> : <></>
+                    }
+                </Grid>
             </Card>
             : <></>
     )

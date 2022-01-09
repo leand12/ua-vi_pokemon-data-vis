@@ -21,6 +21,39 @@ export function loadBarChartGenerations(pokemons) {
                 .append("g")
                 .attr("transform", "translate("+margin+","+ margin+")");
     
+
+    let tooltip = d3.select("#barchart-div")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
+                    .style("position", "absolute")
+                    .style("display", "block")
+                    .style("left", 0)
+                    .style("top", 0)
+
+                    
+
+    let mouseover = function (d) {
+        tooltip.style("opacity", 1)
+        tooltip.style("z-index", 1000)
+
+    }
+    let mousemove = function (event, d) {
+        tooltip
+            .html("This generation has " + d + " Pokemon")
+            .style("left", (event.pageX - 20 - margin) + "px")
+            .style("top", (event.pageY + 10) + "px")
+    }
+    let mouseleave = function (d) {
+        tooltip.style("opacity", 0)
+        tooltip.style("z-index", -1)
+    }
+
     // X axis
     let x = d3.scaleBand()
         .range([ 0, width ])
@@ -52,6 +85,10 @@ export function loadBarChartGenerations(pokemons) {
             .attr("fill", "blue")
             // no bar at the beginning thus:
             .attr("y", (d) => y(d))
-            .attr("height", function(d) {return height - y(d); });
+            .attr("height", function(d) {return height - y(d); })
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave);
+
 
 }
