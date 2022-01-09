@@ -1,8 +1,9 @@
 import React from 'react';
 
 import Filters from "./Filters";
-import './style.css';
+import Search from './Search'
 import TeamBuilderBar from './TeamBuilderBar';
+import './style.css';
 
 const TAB = {
     FILTERS: 0,
@@ -22,19 +23,22 @@ export default function SideBar() {
     return (
         <>
             <div className={hide ? "controls hidden" : "controls"}>
-                <div style={{ width: "100%", minWidth: 245 }}>
+                <div style={{ width: "100%", minWidth: 200 }}>
                     {
-                        tab === TAB.FILTERS ?
-                            <Filters /> :
-                            <TeamBuilderBar />
+                        tab === TAB.FILTERS ? (
+                            <div>
+                                <Filters />
+                                <Search />
+                            </div>
+                        ) : <TeamBuilderBar />
                     }
                 </div>
             </div>
             <div className="controls-toggle">
                 <div className='controls-toggle-inner noselect vertical-text'>
-                    <span className={tab === TAB.FILTERS ? 'active' : ''} 
+                    <span className={tab === TAB.FILTERS ? 'active' : ''}
                         onClick={() => toggleBar(TAB.FILTERS)}>Filters</span>
-                    <span className={tab === TAB.TEAM_BUILDER ? 'active' : ''} 
+                    <span className={tab === TAB.TEAM_BUILDER ? 'active' : ''}
                         onClick={() => toggleBar(TAB.TEAM_BUILDER)}>Team Builder</span>
                 </div>
             </div>
