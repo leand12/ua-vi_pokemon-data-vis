@@ -129,7 +129,7 @@ export function loadTypeHeatmap(data, xLabel, yLabel){
     }
     let mousemove = function (event, d) {
         tooltip
-            .html("The exact value of<br>this cell is: " + d)
+            .html(d)
             .style("left", (event.pageX - 100 - margin) + "px")
             .style("top", (event.pageY) + "px")
     }

@@ -10,7 +10,7 @@ export default function ChartBar() {
     }, []);
 
     return (
-        <div style={{marginBottom: "100px"}}>
+        <div id="barchart-div" style={{marginBottom: "100px"}}>
             <svg className="charts-bar"></svg>
         </div>
     )
