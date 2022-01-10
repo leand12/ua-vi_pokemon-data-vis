@@ -155,7 +155,6 @@ export function loadTypeHeatmap(data, xLabel, yLabel, id){
 
     let cell_size = 50;
 
-
     let svg = d3.select('#' + id + " .charts-heatmap");
     let height = yLabel.length*cell_size
     let width = xLabel.length*cell_size
