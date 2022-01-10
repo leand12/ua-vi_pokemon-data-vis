@@ -16,10 +16,28 @@ export default function Charts({ changePage }) {
                 Team Planner
             </Button>
 
-            <ChartLine />
-            <ChartBar />
-            <ChartHeatmap />
-            <ChartHeatmap stats />
+            <div style={{ display: "flex", direction: "row", justifyContent: "space-around" }}>
+                <div>
+                    <h2>Pokemon Stats Tendencies</h2>
+                    <ChartLine />
+                </div>
+                <div>
+                    <h2>Generation Statistics</h2>
+                    <ChartBar />
+                </div>
+            </div>
+            <div style={{ padding: "0 112px 43px 112px" }}>
+                <hr style={{ border: "1px solid lightgray", height: 1 }} />
+            </div>
+            <div style={{ display: "flex", direction: "row", justifyContent: "space-evenly" }}>
+                <div>
+                    <h2 style={{ paddingLeft: 50 }}>Pokemon Stats Tendencies</h2>
+                    <ChartHeatmap />
+                </div><div>
+                    <h2 style={{ paddingLeft: 50 }}>Pokemon Stats Tendencies</h2>
+                    <ChartHeatmap stats />
+                </div>
+            </div>
         </div>
     )
 }

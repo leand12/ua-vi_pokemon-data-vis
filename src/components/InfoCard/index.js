@@ -68,7 +68,7 @@ export default function InfoCard(props) {
                     <h2>Type Weaknesses</h2>
                     <TypeTable types={[pokemon.type1, pokemon.type2]} />
                 </Grid>
-                <Grid style={{padding: "20px"}} container>
+                <Grid style={{padding: "20px"}} container justifyContent="center">
                     <Button style={{ margin: 8, backgroundColor: "green" }} variant="contained"
                                 onClick={() => { addToTeam(pokemon) }}> Add to Team</Button>
                     {props.comparable ?

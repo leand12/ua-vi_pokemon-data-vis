@@ -128,7 +128,7 @@ export function loadTypeHeatmap(data, xLabel, yLabel, id){
     }
     let mousemove = function (event, d) {
         tooltip
-            .html(d)
+            .html(Math.round(d * 1000)/1000)
             .style("left", (event.pageX + 100 - margin) + "px")
             .style("top", (event.pageY) + "px")
     }
@@ -150,7 +150,7 @@ export function loadTypeHeatmap(data, xLabel, yLabel, id){
     }
 
     let colors = d3.scaleLinear()
-        .range(["black", "white"])
+        .range(["beige", "darkred"])
         .domain([min, max])
 
     let cell_size = 50;

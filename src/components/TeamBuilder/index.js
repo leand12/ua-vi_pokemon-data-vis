@@ -80,13 +80,15 @@ export default function TeamBuilder() {
                     <SmInfoCard key={p.name + "_" + i} pokemon={p} onTeam={true} highlighted={highlighted[i]}/> 
                 )
             })}
-            <StatsTable data={stats} />    
-
+            <h2>Type Coverage</h2>
             {Object.keys(coverage).map((t, i) => {
                 return (
-                    <img className='type-icons' onMouseOver={() => typeOver(coverage[t])} onMouseLeave={() => clearOvers()} key={t + "_" + i} src={type_images[t]} style={{border: "1px solid", borderColor: coverage[t].length ? "gold" : "transparent", opacity: coverage[t].length ? 1 : 0.3 }}></img>
+                    <img className='type-icons' onMouseOver={() => typeOver(coverage[t])} onMouseLeave={() => clearOvers()} key={t + "_" + i} src={type_images[t]} style={{border: coverage[t].length ? "2px solid gold" : "1px solid transparent", opacity: coverage[t].length ? 1 : 0.2 }}></img>
                 )
-            })}        
+            })}
+                
+            <h2>Global Stats</h2>
+            <StatsTable data={stats} />    
         </div>
     )
 }

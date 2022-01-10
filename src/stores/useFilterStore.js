@@ -31,7 +31,26 @@ const filterPokemons = (filters) => {
 }
 
 const initFilters = {
-    types: ['fire', 'water'],
+    types: [
+        'normal',
+        'fire',
+        'water',
+        'electric',
+        'grass',
+        'ice',
+        'fighting',
+        'poison',
+        'ground',
+        'flying',
+        'psychic',
+        'bug',
+        'rock',
+        'ghost',
+        'dragon',
+        'dark',
+        'steel',
+        'fairy',
+    ],
     typesSelection: 'all',
     generations: [1, 2, 3, 4, 5, 6, 7],
 }

@@ -49,7 +49,7 @@ export default function SmInfoCard({ pokemon, highlighted, onTeam }) {
     }
 
     return (
-        <Grid container direction="row" className="exterior" alignItems="center" style={{ borderColor: highlighted ? "gold" : "gray" }}
+        <Grid container direction="row" className="exterior" alignItems="center" style={{ border: highlighted ? "2px solid gold" : "1px solid gray"}}
             onMouseEnter={mouseOverHandler} onMouseLeave={mouseOutHandler}>
 
             <Grid item md={2} style={{ textAlign: "center" }}>

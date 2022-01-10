@@ -36,7 +36,7 @@ export default function Filters() {
                 <TextField sx={{ width: "100%" }} id="search-pokemon" label="Name" variant="outlined" value={search} onChange={handleChange} />
             </FormControl>
             <div style={{ marginTop: 16, paddingLeft: 8, textAlign: "left" }}>
-                Showing <strong>{shownPokemons.length}</strong> of {pokemons.length} results:
+                Showing {shownPokemons.length} of <strong>{pokemons.length}</strong> results:
             </div>
             <div style={{ marginTop: 16 }}>
                 {

@@ -83,7 +83,7 @@ export function loadBarChartGenerations(pokemons) {
         .append("rect")
             .attr("x", function(d, i) { return width/7 * i + 5 })
             .attr("width", width/7 - 10)
-            .attr("fill", "blue")
+            .attr("fill", "darkred")
             // no bar at the beginning thus:
             .attr("y", (d) => y(d))
             .attr("height", function(d) {return height - y(d); })
