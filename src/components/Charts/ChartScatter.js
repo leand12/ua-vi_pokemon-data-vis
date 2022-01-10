@@ -44,7 +44,7 @@ export default function ChartScatter() {
 
     return (
         <div>
-            <h1>Status Relation</h1>
+            <h1>Stats Relation</h1>
             <Grid container className="container-area">
                 <Grid item md={12} lg={7} style={{ width: "100%", textAlign: "center" }}>
                     <Grid container direction="row" justifyContent="space-evenly">

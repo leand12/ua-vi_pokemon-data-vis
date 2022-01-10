@@ -31,10 +31,10 @@ export default function Charts({ changePage }) {
             </div>
             <div style={{ display: "flex", direction: "row", justifyContent: "space-evenly" }}>
                 <div>
-                    <h2 style={{ paddingLeft: 50 }}>Pokemon Stats Tendencies</h2>
+                    <h2 style={{ paddingLeft: 50 }}>Pokemon Stats per Type Correlation</h2>
                     <ChartHeatmap />
                 </div><div>
-                    <h2 style={{ paddingLeft: 50 }}>Pokemon Stats Tendencies</h2>
+                    <h2 style={{ paddingLeft: 50 }}>Pokemon Stats Correlation</h2>
                     <ChartHeatmap stats />
                 </div>
             </div>
