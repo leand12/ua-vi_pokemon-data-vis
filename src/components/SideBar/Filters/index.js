@@ -6,7 +6,7 @@ import FormControl from '@mui/material/FormControl';
 export default function Filters() {
     return (
         <>
-            <FormControl>
+            <FormControl sx={{ width: "100%" }}>
                 <h1>Filters</h1>
                 <TypeSelect />
                 <TypeSwitch />
