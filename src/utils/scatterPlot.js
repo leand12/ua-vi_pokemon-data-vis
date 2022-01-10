@@ -1,7 +1,7 @@
 import useCompareStore from "stores/useCompareStore";
 import * as d3 from "d3";
 
-const marginX = 30,
+const marginX = 55,
    marginY = marginX / 2,
    scalingX = 1,
    scalingY = 1;
@@ -10,7 +10,8 @@ const width = 300, height = 300;
 let svg, scatter, zoom, xAxis, yAxis, yScale, xScale, xType, yType;
 
 export function initScatterPlot() {
-   svg = d3.select("svg.scatter-chart");
+   svg = d3.select("svg.scatter-chart")
+      .attr("transform", "translate(" + marginX * 2 + "," + marginY + ")")
 
    svg.selectAll("*").remove()
 
@@ -49,8 +50,21 @@ export function initScatterPlot() {
       .style("fill", "none")
       .style("pointer-events", "all")
       .call(zoom);
-      // .on("wheel.zoom", null)
-      // .on("dblclick.zoom", null);
+   // .on("wheel.zoom", null)
+   // .on("dblclick.zoom", null);
+}
+
+export function setLabels(lb1, lb2) {
+   svg.selectAll("text.label").remove();
+   svg.append("text")
+      .attr("class", "label")
+      .attr("x", width / 2)
+      .attr("y", height + marginY/2 + 4)
+      .text(lb1)
+   svg.append("text")
+      .attr("class", "label")
+      .attr("transform", "translate(" + (marginX / 2 - 14) + "," + (marginY*1.5 + height / 2) + ")rotate(270)")
+      .text(lb2);
 }
 
 function updateChart(event) {

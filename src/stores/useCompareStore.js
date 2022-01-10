@@ -1,6 +1,5 @@
 import create from "zustand";
 import { combine } from "zustand/middleware";
-import data from 'archive/pokemon.json'
 
 const useCompareStore = create(
     combine(
@@ -8,7 +7,7 @@ const useCompareStore = create(
             compare1 : {},
             compare2 : {},
             selected : {},
-            team     : [data.pokemons[1]]
+            team     : []
         },
         (set, get) => ({
             setSelected: (newSelected) => {

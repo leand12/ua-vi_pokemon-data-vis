@@ -20,8 +20,8 @@
         "water_against": {"bug": 1, "dark": 1, "dragon": 1, "electric": 2, "fairy": 1, "fighting": 1, "fire": 0.5, "flying": 1, "ghost": 1, "grass": 2, "ground": 1, "ice": 0.5, "normal": 1, "poison": 1, "psychic": 1, "rock": 1, "steel": 0.5, "water": 0.5}
     },
     "pokemons": [
-        {"attack": 62, "defense": 63, "hp": 60, "name": "Ivysaur", "pokedex_number": 2, "sp_attack": 80, "sp_defense": 80, "speed": 60, "type1": "grass", "type2": "poison", "generation": 1, "is_legendary": 0},
         {"attack": 49, "defense": 49, "hp": 45, "name": "Bulbasaur", "pokedex_number": 1, "sp_attack": 65, "sp_defense": 65, "speed": 45, "type1": "grass", "type2": "poison", "generation": 1, "is_legendary": 0},
+        {"attack": 62, "defense": 63, "hp": 60, "name": "Ivysaur", "pokedex_number": 2, "sp_attack": 80, "sp_defense": 80, "speed": 60, "type1": "grass", "type2": "poison", "generation": 1, "is_legendary": 0},
         {"attack": 100, "defense": 123, "hp": 80, "name": "Venusaur", "pokedex_number": 3, "sp_attack": 122, "sp_defense": 120, "speed": 80, "type1": "grass", "type2": "poison", "generation": 1, "is_legendary": 0},
         {"attack": 52, "defense": 43, "hp": 39, "name": "Charmander", "pokedex_number": 4, "sp_attack": 60, "sp_defense": 50, "speed": 65, "type1": "fire", "type2": "", "generation": 1, "is_legendary": 0},
         {"attack": 64, "defense": 58, "hp": 58, "name": "Charmeleon", "pokedex_number": 5, "sp_attack": 80, "sp_defense": 65, "speed": 80, "type1": "fire", "type2": "", "generation": 1, "is_legendary": 0},

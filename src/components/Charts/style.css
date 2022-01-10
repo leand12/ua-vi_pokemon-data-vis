@@ -50,8 +50,9 @@ svg.type-relation .nodes-half {
 }
 
 svg.scatter-chart {
-    width: 100%;
-    max-width: 650px;
+    width: 80%;
+    margin-left: -180px;
+    margin-top: -60px;
 }
 
 svg.radar-chart {

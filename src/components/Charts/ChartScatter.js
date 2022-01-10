@@ -1,12 +1,20 @@
 import React from 'react';
 import { FormControl, MenuItem, InputLabel, Select } from '@mui/material';
-import { loadScatterPlot, initScatterPlot, changeColors, zoomBy } from 'utils/scatterPlot';
+import { loadScatterPlot, initScatterPlot, changeColors, setLabels } from 'utils/scatterPlot';
 import useFilterStore from 'stores/useFilterStore';
 import InfoCard from 'components/InfoCard';
 import useCompareStore from 'stores/useCompareStore';
 import Grid from '@mui/material/Grid';
-import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+
+
+const convertStat = {
+    "attack": "Attack",
+    "defense": "Defense",
+    "sp_attack": "Special Attack",
+    "sp_defense": "Special Defense",
+    "hp": "Health",
+    "speed": "Speed",
+}
 
 // https://medium.com/codex/an-interactive-scatter-plot-e5a01064b17
 export default function ChartScatter() {
@@ -31,6 +39,7 @@ export default function ChartScatter() {
 
     React.useEffect(() => {
         loadScatterPlot(pokemons, xAxis, yAxis);
+        setLabels(convertStat[xAxis], convertStat[yAxis]);
     }, [pokemons, xAxis, yAxis]);
 
     return (
@@ -38,52 +47,49 @@ export default function ChartScatter() {
             <h1>Status Relation</h1>
             <Grid container className="container-area">
                 <Grid item md={12} lg={7} style={{ width: "100%", textAlign: "center" }}>
-                    {/* <div className="btn-zoom" style={{top: "calc(2.5em + 40px)", right: "calc(10px + 30px)"}}>
-                        <ZoomInIcon onClick={() => zoomBy(2)} />
-                        <ZoomOutIcon onClick={() => zoomBy(0.5)} />
-                    </div> */}
-                    <svg className="scatter-chart" viewBox='0 0 300 300'></svg>
+                    <Grid container direction="row" justifyContent="space-evenly">
+                        <FormControl style={{ position: 'relative', margin: '1.5em 0' }}>
+                            <InputLabel id="yAxis-label">Y axis</InputLabel>
+                            <Select
+                                labelId="yAxis-label"
+                                id="yAxis-select"
+                                value={yAxis}
+                                label="Y axis"
+                                onChange={handleChangeY}
+                                sx={{ width: 170 }}
+                            >
+                                <MenuItem value={"attack"}>Attack</MenuItem>
+                                <MenuItem value={"defense"}>Defense</MenuItem>
+                                <MenuItem value={"sp_attack"}>Special Attack</MenuItem>
+                                <MenuItem value={"sp_defense"}>Special Defense</MenuItem>
+                                <MenuItem value={"hp"}>Health</MenuItem>
+                                <MenuItem value={"speed"}>Speed</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl style={{ position: 'relative', margin: '1.5em 0' }} >
+                            <InputLabel id="xAxis-label">X axis</InputLabel>
+                            <Select
+                                labelId="xAxis-label"
+                                id="xAxis-select"
+                                value={xAxis}
+                                label="X axis"
+                                onChange={handleChangeX}
+                                sx={{ width: 170 }}
+                            >
+                                <MenuItem value={"attack"}>Attack</MenuItem>
+                                <MenuItem value={"defense"}>Defense</MenuItem>
+                                <MenuItem value={"sp_attack"}>Special Attack</MenuItem>
+                                <MenuItem value={"sp_defense"}>Special Defense</MenuItem>
+                                <MenuItem value={"hp"}>Health</MenuItem>
+                                <MenuItem value={"speed"}>Speed</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    
+                    <svg className="scatter-chart" viewBox='0 0 330 330'></svg>
                 </Grid>
                 <Grid item md={12} lg={5} style={{ width: "100%" }}>
                     <Grid container justifyContent="center">
-                        <Grid container direction="row" justifyContent="space-evenly">
-                            <FormControl style={{ position: 'relative', margin: '1.5em 0' }}>
-                                <InputLabel id="yAxis-label">Y axis</InputLabel>
-                                <Select
-                                    labelId="yAxis-label"
-                                    id="yAxis-select"
-                                    value={yAxis}
-                                    label="Y axis"
-                                    onChange={handleChangeY}
-                                    sx={{ width: 170 }}
-                                >
-                                    <MenuItem value={"attack"}>Attack</MenuItem>
-                                    <MenuItem value={"defense"}>Defense</MenuItem>
-                                    <MenuItem value={"sp_attack"}>Special Attack</MenuItem>
-                                    <MenuItem value={"sp_defense"}>Special Defense</MenuItem>
-                                    <MenuItem value={"hp"}>Health</MenuItem>
-                                    <MenuItem value={"speed"}>Speed</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl style={{ position: 'relative', margin: '1.5em 0' }} >
-                                <InputLabel id="xAxis-label">X axis</InputLabel>
-                                <Select
-                                    labelId="xAxis-label"
-                                    id="xAxis-select"
-                                    value={xAxis}
-                                    label="X axis"
-                                    onChange={handleChangeX}
-                                    sx={{ width: 170 }}
-                                >
-                                    <MenuItem value={"attack"}>Attack</MenuItem>
-                                    <MenuItem value={"defense"}>Defense</MenuItem>
-                                    <MenuItem value={"sp_attack"}>Special Attack</MenuItem>
-                                    <MenuItem value={"sp_defense"}>Special Defense</MenuItem>
-                                    <MenuItem value={"hp"}>Health</MenuItem>
-                                    <MenuItem value={"speed"}>Speed</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
                         <InfoCard comparable={true} type={"selected"} />
                     </Grid>
                 </Grid>
